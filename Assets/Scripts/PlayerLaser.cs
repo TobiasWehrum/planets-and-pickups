@@ -10,7 +10,6 @@ namespace MiniPlanetDefense
 
         void Awake()
         {
-            Debug.Log(laserLineRenderer.widthMultiplier);
             laserLineRenderer.enabled = false;
         }
         
