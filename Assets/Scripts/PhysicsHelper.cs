@@ -36,7 +36,7 @@ namespace MiniPlanetDefense
                 if (percentDistanceToPlanetEdge == 1)
                     continue;
 
-                var gravityFromPlanet = gravityCurve.Evaluate(percentDistanceToPlanetEdge) * gravityMultiplier;
+                var gravityFromPlanet = gravityCurve.Evaluate(percentDistanceToPlanetEdge) * gravityMultiplier * planet.Radius;
                 accumulatedGravity += deltaToPlanet.normalized * gravityFromPlanet;
             }
             return accumulatedGravity;

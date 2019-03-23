@@ -782,7 +782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9c42d0a379c3a94f859be598d4162fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityMultiplier: 10
+  gravityMultiplier: 2
   gravityCurve:
     serializedVersion: 2
     m_Curve:
