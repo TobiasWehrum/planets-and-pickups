@@ -544,7 +544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9c42d0a379c3a94f859be598d4162fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravityMultiplier: 2
+  gravityMultiplier: 40
   gravityCurve:
     serializedVersion: 2
     m_Curve:
@@ -570,6 +570,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   gravityMaxDistance: 10
+  planetGravityDependsOnRadius: 0
 --- !u!4 &539315450
 Transform:
   m_ObjectHideFlags: 0
@@ -615,12 +616,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1531d65cea464d4fab612946d86efcf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPlanet: {fileID: 2095429360}
   moveSpeedOnPlanet: 500
-  freeMovementSpeed: 15
-  jumpImpulse: 6
-  maxSpeed: 10
+  freeMovementSpeed: 0
+  jumpImpulse: 20
+  maxSpeed: Infinity
   maxDistanceFromCenter: 24.5
+  onPlanetRadius: 0.3
 --- !u!4 &641760355
 Transform:
   m_ObjectHideFlags: 0
@@ -1417,18 +1418,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6303134519528310796}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2095429360 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6303134519848959740, guid: d81daf5e0e7790f41af513ea2d20b928,
-    type: 3}
-  m_PrefabInstance: {fileID: 6303134519528310796}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcab2f14cdd74918ab271da067c07ba5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6303134519528310796
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,16 +5,18 @@ namespace MiniPlanetDefense
 {
     public class Player : MonoBehaviour
     {
-        [SerializeField] Planet currentPlanet;
         [SerializeField] float moveSpeedOnPlanet;
         [SerializeField] float freeMovementSpeed = 10;
         [SerializeField] float jumpImpulse = 5;
         [SerializeField] float maxSpeed = 10f;
         [SerializeField] float maxDistanceFromCenter;
+        [SerializeField] float onPlanetRadius = 0.1f;
         
         [Inject] PhysicsHelper physicsHelper;
 
         new Rigidbody2D rigidbody;
+
+        float radius;
 
         bool hasMovedHorizontallyLastFrame;
         int horizontalMovementDirectionMultiplier = 1;
@@ -24,21 +26,23 @@ namespace MiniPlanetDefense
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
+
+            radius = transform.localScale.x / 2f;
         }
 
         void FixedUpdate()
         {
+            var currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
             if (currentPlanet == null)
-                return;
-
-            /*
-            var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter(currentPlanet).normalized;
-            rigidbody.AddForce(directionTowardsPlanetCenter * physicsHelper.GravityOnPlanet);
-            */
-
-            rigidbody.AddForce(physicsHelper.GetGravityAtPosition(transform.position));
-            
-            rigidbody.AddForce(freeMoveDirection * freeMovementSpeed);
+            {
+                rigidbody.AddForce(physicsHelper.GetGravityAtPosition(transform.position, radius));
+                rigidbody.AddForce(freeMoveDirection * freeMovementSpeed);
+            }
+            else
+            {
+                var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter(currentPlanet).normalized;
+                rigidbody.AddForce(directionTowardsPlanetCenter * physicsHelper.GravityOnPlanet);
+            }
 
             // Cap max speed
             if (maxSpeed > 0)
@@ -53,13 +57,34 @@ namespace MiniPlanetDefense
 
         void Update()
         {
-            if (currentPlanet == null)
-                return;
-
-            FreelyMoveInDirections();
-            //MoveAroundPlanet(currentPlanet);
+            var currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
+            //Debug.Log(currentPlanet);
             
-            RestrictPlayerPosition();
+            if (currentPlanet == null)
+            {
+                FreelyMoveInDirections();
+                RestrictPlayerPosition();
+            }
+            else
+            {
+                freeMoveDirection.x = 0;
+                freeMoveDirection.y = 0;
+                
+                MoveAroundPlanet(currentPlanet);
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    var jumpForceDirection = -CalculateDeltaToPlanetCenter(currentPlanet).normalized;
+                    /*
+                    var direction = Input.GetAxis("Horizontal");
+                    jumpForceDirection.x += jumpForceDirection.y * direction;
+                    jumpForceDirection.y -= jumpForceDirection.x * direction;
+                    jumpForceDirection.Normalize();
+                    */
+                    
+                    rigidbody.velocity = jumpForceDirection * jumpImpulse;
+                }
+            }
         }
 
         void FreelyMoveInDirections()
@@ -92,29 +117,18 @@ namespace MiniPlanetDefense
                 }
                 */
                 
-                var speed = moveSpeedOnPlanet / currentPlanet.Radius;
+                var speed = moveSpeedOnPlanet / planet.Radius;
                 var moveDelta = -horizontal * horizontalMovementDirectionMultiplier * speed * Time.deltaTime;
                 var rotatedDirection = Quaternion.Euler(0, 0, moveDelta) * deltaFromPlanetCenter;
-                rigidbody.position = currentPlanet.transform.position + rotatedDirection;
+                rigidbody.position = planet.transform.position + rotatedDirection;
             }
 
             hasMovedHorizontallyLastFrame = isMovingHorizontallyThisFrame;
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                rigidbody.velocity = -CalculateDeltaToPlanetCenter(planet).normalized * jumpImpulse;
-            }
         }
 
         Vector3 CalculateDeltaToPlanetCenter(Planet planet)
         {
             return planet.transform.position - transform.position;
-        }
-
-        void OnCollisionEnter(Collision other)
-        {
-            //var otherPlanet = other.gameObject.GetComponent<Planet>();
-            //currentPlanet = otherPlanet;
         }
     }
 }

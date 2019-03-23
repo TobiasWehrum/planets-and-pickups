@@ -8,7 +8,7 @@ namespace MiniPlanetDefense
     {
         [Inject] PhysicsHelper physicsHelper;
         
-        ParticleSystem particleSystem;
+        new ParticleSystem particleSystem;
         
         ParticleSystem.Particle[] particles;
 
@@ -29,7 +29,7 @@ namespace MiniPlanetDefense
                 if (particle.remainingLifetime <= 0f)
                     continue;
                 
-                particle.velocity += physicsHelper.GetGravityAtPosition(particle.position) * Time.deltaTime;
+                particle.velocity += physicsHelper.GetGravityAtPosition(particle.position, 0f) * Time.deltaTime;
                 particles[index] = particle;
             }
 

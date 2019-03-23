@@ -12,7 +12,7 @@ namespace MiniPlanetDefense
 
         void Awake()
         {
-            Radius = transform.localScale.x;
+            Radius = transform.localScale.x / 2f;
             Position = transform.position;
         }
 
