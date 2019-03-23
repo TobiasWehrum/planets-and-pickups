@@ -7,7 +7,9 @@ namespace MiniPlanetDefense
     {
         [SerializeField] Planet currentPlanet;
         [SerializeField] float moveSpeedOnPlanet;
+        [SerializeField] float freeMovementSpeed = 10;
         [SerializeField] float jumpImpulse = 5;
+        [SerializeField] float maxSpeed = 10f;
         
         [Inject] PhysicsHelper physicsHelper;
 
@@ -15,6 +17,8 @@ namespace MiniPlanetDefense
 
         bool hasMovedHorizontallyLastFrame;
         int horizontalMovementDirectionMultiplier = 1;
+
+        Vector2 freeMoveDirection;
         
         void Awake()
         {
@@ -26,8 +30,24 @@ namespace MiniPlanetDefense
             if (currentPlanet == null)
                 return;
 
-            var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter().normalized;
+            /*
+            var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter(currentPlanet).normalized;
             rigidbody.AddForce(directionTowardsPlanetCenter * physicsHelper.GravityOnPlanet);
+            */
+
+            rigidbody.AddForce(physicsHelper.GetGravityAtPosition(transform.position));
+            
+            rigidbody.AddForce(freeMoveDirection * freeMovementSpeed);
+
+            // Cap max speed
+            if (maxSpeed > 0)
+            {
+                var speedSqr = rigidbody.velocity.sqrMagnitude;
+                if (speedSqr > maxSpeed * maxSpeed)
+                {
+                    rigidbody.velocity *= maxSpeed / Mathf.Sqrt(speedSqr);
+                }
+            }
         }
 
         void Update()
@@ -35,13 +55,24 @@ namespace MiniPlanetDefense
             if (currentPlanet == null)
                 return;
 
-            var horizontal = Input.GetAxis("Horizontal");
+            FreelyMoveInDirections();
+            //MoveAroundPlanet(currentPlanet);
+        }
 
+        void FreelyMoveInDirections()
+        {
+            freeMoveDirection.x = Input.GetAxis("Horizontal");
+            freeMoveDirection.y = Input.GetAxis("Vertical");
+        }
+        
+        void MoveAroundPlanet(Planet planet)
+        {
+            var horizontal = Input.GetAxis("Horizontal");
             var isMovingHorizontallyThisFrame = horizontal != 0f;
 
             if (isMovingHorizontallyThisFrame)
             {
-                var deltaFromPlanetCenter = -CalculateDeltaToPlanetCenter();
+                var deltaFromPlanetCenter = -CalculateDeltaToPlanetCenter(planet);
                 /*
                 if (!hasMovedHorizontallyLastFrame)
                 {
@@ -59,13 +90,13 @@ namespace MiniPlanetDefense
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                rigidbody.velocity = -CalculateDeltaToPlanetCenter().normalized * jumpImpulse;
+                rigidbody.velocity = -CalculateDeltaToPlanetCenter(planet).normalized * jumpImpulse;
             }
         }
 
-        Vector3 CalculateDeltaToPlanetCenter()
+        Vector3 CalculateDeltaToPlanetCenter(Planet planet)
         {
-            return currentPlanet.transform.position - transform.position;
+            return planet.transform.position - transform.position;
         }
 
         void OnCollisionEnter(Collision other)
