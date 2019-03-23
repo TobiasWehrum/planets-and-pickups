@@ -1,0 +1,1 @@
+Locally, Tobias has the plugin JetBrains Rider creates in here. That shouldn't be committed, so it's in .gitignore, but it seems like a bad idea to ignore Asset/Plugins or Asset/Plugins/Editor.
