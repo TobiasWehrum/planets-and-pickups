@@ -10,6 +10,7 @@ namespace MiniPlanetDefense
         [SerializeField] float freeMovementSpeed = 10;
         [SerializeField] float jumpImpulse = 5;
         [SerializeField] float maxSpeed = 10f;
+        [SerializeField] float maxDistanceFromCenter;
         
         [Inject] PhysicsHelper physicsHelper;
 
@@ -57,6 +58,8 @@ namespace MiniPlanetDefense
 
             FreelyMoveInDirections();
             //MoveAroundPlanet(currentPlanet);
+            
+            RestrictPlayerPosition();
         }
 
         void FreelyMoveInDirections()
@@ -65,6 +68,15 @@ namespace MiniPlanetDefense
             freeMoveDirection.y = Input.GetAxis("Vertical");
         }
         
+        void RestrictPlayerPosition()
+        {
+            var distanceFromCenterSqr = rigidbody.position.sqrMagnitude;
+            if (distanceFromCenterSqr > maxDistanceFromCenter * maxDistanceFromCenter)
+            {
+                rigidbody.position *= maxDistanceFromCenter / Mathf.Sqrt(distanceFromCenterSqr);
+            }
+        }
+
         void MoveAroundPlanet(Planet planet)
         {
             var horizontal = Input.GetAxis("Horizontal");
