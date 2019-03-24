@@ -9,7 +9,6 @@ namespace MiniPlanetDefense
         [SerializeField] float freeMovementSpeed = 10;
         [SerializeField] float jumpImpulse = 5;
         [SerializeField] float maxSpeed = 10f;
-        [SerializeField] float maxDistanceFromCenter;
         [SerializeField] float onPlanetRadius = 0.1f;
         [SerializeField] Color colorOnPlanet = Color.yellow;
         [SerializeField] Color colorOffPlanet = Color.white;
@@ -17,6 +16,8 @@ namespace MiniPlanetDefense
         [SerializeField] TrailRenderer trailRenderer;
         
         [Inject] PhysicsHelper physicsHelper;
+        [Inject] Constants constants;
+        [Inject] IngameUI ingameUI;
 
         new Rigidbody2D rigidbody;
 
@@ -28,6 +29,8 @@ namespace MiniPlanetDefense
         Vector2 freeMoveDirection;
 
         bool isColoredOnPlanet;
+
+        int score;
         
         void Awake()
         {
@@ -108,6 +111,7 @@ namespace MiniPlanetDefense
         void RestrictPlayerPosition()
         {
             var distanceFromCenterSqr = rigidbody.position.sqrMagnitude;
+            var maxDistanceFromCenter = constants.playfieldRadius - radius;
             if (distanceFromCenterSqr > maxDistanceFromCenter * maxDistanceFromCenter)
             {
                 rigidbody.position *= maxDistanceFromCenter / Mathf.Sqrt(distanceFromCenterSqr);
@@ -158,6 +162,18 @@ namespace MiniPlanetDefense
             mainRenderer.material.color = color;
             trailRenderer.startColor = color;
             trailRenderer.endColor = color;
+        }
+
+        void OnCollisionEnter2D(Collision2D other)
+        {
+            var pickup = other.gameObject.GetComponent<Pickup>();
+            if (pickup != null)
+            {
+                pickup.Collect();
+
+                score++;
+                ingameUI.SetScore(score);
+            }
         }
     }
 }
