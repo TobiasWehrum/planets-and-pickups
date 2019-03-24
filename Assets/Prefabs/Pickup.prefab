@@ -89,6 +89,30 @@ MonoBehaviour:
   borderAvoidanceMultiplier: 10
   playerAttractionMaxDistance: 4
   playerAttractionMultiplier: 5
+  playerAttractionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.8300903
+      outSlope: 2.8300903
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.051668458
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.10190623
+      outSlope: -0.10190623
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.046286404
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!58 &227804264516071457
 CircleCollider2D:
   m_ObjectHideFlags: 0

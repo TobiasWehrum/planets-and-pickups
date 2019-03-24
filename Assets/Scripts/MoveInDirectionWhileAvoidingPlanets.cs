@@ -11,7 +11,6 @@ namespace MiniPlanetDefense
         [SerializeField] AnimationCurve borderAvoidanceCurve;
         [SerializeField] float borderAvoidanceMultiplier = 1f;
         [SerializeField] float playerAttractionMaxDistance = 2f;
-        [SerializeField] float playerAttractionMultiplier;
 
         [Inject] PhysicsHelper physicsHelper;
         [Inject] Constants constants;
@@ -42,18 +41,22 @@ namespace MiniPlanetDefense
 
             var evadeDirection = Vector3.Project(evasionGravity, orthogonalDirection);
 
+            var direction = ((Vector3) mainDirection + evadeDirection).normalized;
+            
             var extraGravity = Vector3.zero;
+            var extraGravityWeight = 0f;
             var playerDelta = player.transform.position - transform.position;
             var playerDistanceSqr = playerDelta.sqrMagnitude;
             if (playerDistanceSqr <= (playerAttractionMaxDistance * playerAttractionMaxDistance))
             {
                 var playerDistance = Mathf.Sqrt(playerDistanceSqr);
                 var playerDirection = playerDelta.normalized;
+                var playerNearnessPercent = 1 - (playerDistance / playerAttractionMaxDistance);
 
-                extraGravity += playerDirection * (playerDistance / playerAttractionMaxDistance) * playerAttractionMultiplier;
+                direction = Vector3.Lerp(direction, playerDirection, playerNearnessPercent).normalized;
             }
             
-            rigidbody.velocity = ((Vector3) mainDirection + evadeDirection).normalized * speed + extraGravity;
+            rigidbody.velocity = direction * speed + extraGravity;
         }
     }
 }
