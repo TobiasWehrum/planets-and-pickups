@@ -14,6 +14,7 @@ namespace MiniPlanetDefense
         [SerializeField] Color colorOffPlanet = Color.white;
         [SerializeField] Renderer mainRenderer;
         [SerializeField] TrailRenderer trailRenderer;
+        [SerializeField] GameObject restartScreen;
         
         [Inject] PhysicsHelper physicsHelper;
         [Inject] Constants constants;
@@ -31,6 +32,8 @@ namespace MiniPlanetDefense
         bool isColoredOnPlanet;
 
         int score;
+
+        bool destroyed;
         
         void Awake()
         {
@@ -166,14 +169,30 @@ namespace MiniPlanetDefense
 
         void OnCollisionEnter2D(Collision2D other)
         {
-            var pickup = other.gameObject.GetComponent<Pickup>();
-            if (pickup != null)
+            var otherGameObject = other.gameObject;
+            if (otherGameObject.CompareTag(Tag.Pickup))
             {
+                var pickup = other.gameObject.GetComponent<Pickup>();
                 pickup.Collect();
 
                 score++;
                 ingameUI.SetScore(score);
             }
+            else if (otherGameObject.CompareTag(Tag.Enemy))
+            {
+                HitEnemy();
+            }
+        }
+
+        void HitEnemy()
+        {
+            if (destroyed)
+                return;
+            
+            gameObject.SetActive(false);
+            destroyed = true;
+
+            restartScreen.SetActive(true);
         }
     }
 }

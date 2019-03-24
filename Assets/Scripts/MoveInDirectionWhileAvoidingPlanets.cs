@@ -6,7 +6,6 @@ namespace MiniPlanetDefense
     public class MoveInDirectionWhileAvoidingPlanets : MonoBehaviour
     {
         [SerializeField] float speed;
-        [SerializeField] Vector2 mainDirection;
         [SerializeField] float planetAvoidanceMultiplier = 1f;
         [SerializeField] AnimationCurve borderAvoidanceCurve;
         [SerializeField] float borderAvoidanceMultiplier = 1f;
@@ -18,6 +17,7 @@ namespace MiniPlanetDefense
 
         new Rigidbody2D rigidbody;
         
+        Vector2 mainDirection;
         Vector2 orthogonalDirection;
 
         void Awake()
@@ -25,8 +25,14 @@ namespace MiniPlanetDefense
             rigidbody = GetComponent<Rigidbody2D>();
 
             mainDirection = -transform.position.normalized;
-            
             orthogonalDirection = new Vector2(mainDirection.y, -mainDirection.x);
+        }
+
+        public void UpdateMainDirection(Vector3 mainDirection)
+        {
+            this.mainDirection = mainDirection;
+            orthogonalDirection.x = mainDirection.y;
+            orthogonalDirection.y = -mainDirection.x;
         }
         
         void Update()
@@ -43,7 +49,7 @@ namespace MiniPlanetDefense
 
             var direction = ((Vector3) mainDirection + evadeDirection).normalized;
 
-            if (playerAttractionMaxDistance > 0)
+            if ((playerAttractionMaxDistance > 0) && (player.isActiveAndEnabled))
             {
                 var playerDelta = player.transform.position - transform.position;
                 var playerDistanceSqr = playerDelta.sqrMagnitude;

@@ -8,12 +8,18 @@ namespace MiniPlanetDefense
     {
         [SerializeField] GameObject prefab;
         [SerializeField] float spawnDelay = 5f;
+        [SerializeField] [Range(0, 1)] float startPercent; 
 
         [Inject] Constants constants;
         [Inject] DiContainer diContainer;
 
         float spawnCountdown;
 
+        void Awake()
+        {
+            spawnCountdown = startPercent * spawnDelay;
+        }
+        
         void Update()
         {
             spawnCountdown -= Time.deltaTime;
