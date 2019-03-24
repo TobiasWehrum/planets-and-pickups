@@ -11,6 +11,10 @@ namespace MiniPlanetDefense
         [SerializeField] float maxSpeed = 10f;
         [SerializeField] float maxDistanceFromCenter;
         [SerializeField] float onPlanetRadius = 0.1f;
+        [SerializeField] Color colorOnPlanet = Color.yellow;
+        [SerializeField] Color colorOffPlanet = Color.white;
+        [SerializeField] Renderer mainRenderer;
+        [SerializeField] TrailRenderer trailRenderer;
         
         [Inject] PhysicsHelper physicsHelper;
 
@@ -22,12 +26,17 @@ namespace MiniPlanetDefense
         int horizontalMovementDirectionMultiplier = 1;
 
         Vector2 freeMoveDirection;
+
+        bool isColoredOnPlanet;
         
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             radius = transform.localScale.x / 2f;
+
+            isColoredOnPlanet = false;
+            RefreshColor();
         }
 
         void FixedUpdate()
@@ -83,8 +92,11 @@ namespace MiniPlanetDefense
                     */
                     
                     rigidbody.velocity = jumpForceDirection * jumpImpulse;
+                    currentPlanet = null;
                 }
             }
+
+            SetColoredOnPlanet(currentPlanet != null);
         }
 
         void FreelyMoveInDirections()
@@ -129,6 +141,23 @@ namespace MiniPlanetDefense
         Vector3 CalculateDeltaToPlanetCenter(Planet planet)
         {
             return planet.transform.position - transform.position;
+        }
+        
+        void SetColoredOnPlanet(bool value)
+        {
+            if (isColoredOnPlanet == value)
+                return;
+
+            isColoredOnPlanet = value;
+            RefreshColor();
+        }
+        
+        void RefreshColor()
+        {
+            var color = isColoredOnPlanet ? colorOnPlanet : colorOffPlanet;
+            mainRenderer.material.color = color;
+            trailRenderer.startColor = color;
+            trailRenderer.endColor = color;
         }
     }
 }

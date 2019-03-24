@@ -622,6 +622,10 @@ MonoBehaviour:
   maxSpeed: Infinity
   maxDistanceFromCenter: 24.5
   onPlanetRadius: 0.3
+  colorOnPlanet: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  colorOffPlanet: {r: 1, g: 1, b: 1, a: 1}
+  mainRenderer: {fileID: 250150999}
+  trailRenderer: {fileID: 886238377}
 --- !u!4 &641760355
 Transform:
   m_ObjectHideFlags: 0
