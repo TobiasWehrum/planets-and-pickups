@@ -87,6 +87,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   borderAvoidanceMultiplier: 10
+  playerAttractionMaxDistance: 4
+  playerAttractionMultiplier: 5
 --- !u!58 &227804264516071457
 CircleCollider2D:
   m_ObjectHideFlags: 0
