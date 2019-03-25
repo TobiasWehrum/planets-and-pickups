@@ -6,6 +6,8 @@ This is a small open source game prototype made with Unity/C#. The player moves 
 
 Unless otherwise noted (e.g. in the "Used libraries and assets" section) I've designed, built and coded everything myself.
 
+If you want to see more of what I do or contact me, visit my website [https://dragonlab.de](https://dragonlab.de).
+
 ## Building the project
 
 1. Get the project by cloning it with your favourite git client or download it as a ZIP archive.
