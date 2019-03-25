@@ -8,6 +8,10 @@ Unless otherwise noted (e.g. in the "Used libraries and assets" section) I've de
 
 If you want to see more of what I do or contact me, visit my website [https://dragonlab.de](https://dragonlab.de).
 
+## Play the game
+
+If you just want to play the game without building it, you can play it [in your browser](https://dragonlab.de/projects/PlanetsAndPickups/). You can see whether your browser is compatible [here](https://docs.unity3d.com/Manual/webgl-browsercompatibility.html).
+
 ## Building the project
 
 1. Get the project by cloning it with your favourite git client or download it as a ZIP archive.
