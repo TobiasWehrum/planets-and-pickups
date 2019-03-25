@@ -5,6 +5,8 @@ namespace MiniPlanetDefense
 {
     /// <summary>
     /// A primitive sound manager, playing <see cref="AudioSource"/>s when called.
+    ///
+    /// For a bigger project I'd recommend MasterAudio from the Unity Asset Store.
     /// </summary>
     public class SoundManager : MonoBehaviour
     {
