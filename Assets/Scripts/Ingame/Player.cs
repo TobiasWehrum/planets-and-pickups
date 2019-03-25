@@ -14,7 +14,7 @@ namespace MiniPlanetDefense
         [SerializeField] Color colorOffPlanet = Color.white;
         [SerializeField] Renderer mainRenderer;
         [SerializeField] TrailRenderer trailRenderer;
-        [SerializeField] GameObject restartScreen;
+        [SerializeField] ParticleSystem deathParticleSystem;
         
         [Inject] PhysicsHelper physicsHelper;
         [Inject] Constants constants;
@@ -202,11 +202,14 @@ namespace MiniPlanetDefense
         {
             if (destroyed)
                 return;
+
+            deathParticleSystem.transform.parent = null;
+            deathParticleSystem.Play();
             
             gameObject.SetActive(false);
             destroyed = true;
 
-            restartScreen.SetActive(true);
+            ingameUI.ShowRestartScreen();
             
             soundManager.PlaySound(Sound.Death);
         }
