@@ -12,7 +12,7 @@ If you want to see more of what I do or contact me, visit my website [https://dr
 
 You can play the game without building it [in your browser](https://dragonlab.de/projects/PlanetsAndPickups/). (You can see whether your browser is compatible [here](https://docs.unity3d.com/Manual/webgl-browsercompatibility.html).)
 
-<img src="https://dragonlab.de/projects/PlanetsAndPickups/gameplay.gif"/>
+<img src="https://dragonlab.de/projects/PlanetsAndPickups/gameplay2.gif"/>
 
 ## Building the project
 
