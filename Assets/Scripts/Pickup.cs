@@ -8,6 +8,7 @@ namespace MiniPlanetDefense
         [SerializeField] float extraDespawnDistance = 40f;
 
         [Inject] Constants constants;
+        [Inject] Pool pool;
         
         float despawnDistanceSqr;
 
@@ -21,13 +22,13 @@ namespace MiniPlanetDefense
             var distanceFromCenterSqr = transform.position.sqrMagnitude;
             if (distanceFromCenterSqr >= despawnDistanceSqr)
             {
-                Destroy(gameObject);
+                pool.Release(gameObject);
             }
         }
         
         public void Collect()
         {
-            Destroy(gameObject);
+            pool.Release(gameObject);
         }
     }
 }

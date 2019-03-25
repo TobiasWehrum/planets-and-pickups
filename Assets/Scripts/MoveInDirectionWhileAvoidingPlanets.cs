@@ -19,13 +19,20 @@ namespace MiniPlanetDefense
         
         Vector2 mainDirection;
         Vector2 orthogonalDirection;
+        
+        bool initialized;
 
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
-            mainDirection = -transform.position.normalized;
-            orthogonalDirection = new Vector2(mainDirection.y, -mainDirection.x);
+            initialized = false;
+        }
+
+        void OnDisable()
+        {
+            // Deinitialize on despawn
+            initialized = false;
         }
 
         public void UpdateMainDirection(Vector3 mainDirection)
@@ -33,10 +40,23 @@ namespace MiniPlanetDefense
             this.mainDirection = mainDirection;
             orthogonalDirection.x = mainDirection.y;
             orthogonalDirection.y = -mainDirection.x;
+            initialized = true;
+        }
+
+        public void InitializeIfNecessary()
+        {
+            if (initialized)
+                return;
+            
+            mainDirection = -transform.position.normalized;
+            orthogonalDirection = new Vector2(mainDirection.y, -mainDirection.x);
+            initialized = true;
         }
         
         void Update()
         {
+            InitializeIfNecessary();
+            
             var evasionGravity = -physicsHelper.GetGravityAtPosition(rigidbody.position, 0f) * planetAvoidanceMultiplier;
 
             var distanceToCenter = transform.position.magnitude;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -8,10 +9,12 @@ namespace MiniPlanetDefense
     {
         [SerializeField] GameObject prefab;
         [SerializeField] float spawnDelay = 5f;
-        [SerializeField] [Range(0, 1)] float startPercent; 
+        [SerializeField] [Range(0, 1)] float startPercent;
+        [SerializeField] bool usePool;
 
         [Inject] Constants constants;
         [Inject] DiContainer diContainer;
+        [Inject] Pool pool;
 
         float spawnCountdown;
 
@@ -36,7 +39,14 @@ namespace MiniPlanetDefense
             var angleRad = Random.value * Mathf.PI * 2;
             var position = new Vector3(Mathf.Cos(angleRad) * distanceFromCenter, Mathf.Sin(angleRad) * distanceFromCenter, 0);
 
-            diContainer.InstantiatePrefab(prefab, position, Quaternion.identity, transform);
+            if (usePool)
+            {
+                pool.Get(prefab, position, Quaternion.identity, transform);
+            }
+            else
+            {
+                diContainer.InstantiatePrefab(prefab, position, Quaternion.identity, transform);
+            }
         }
     }
 }
