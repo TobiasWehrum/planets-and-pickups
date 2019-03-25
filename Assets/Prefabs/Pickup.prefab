@@ -47,6 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7090412e69e24300a85582fc02ac1f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  extraDespawnDistance: 40
+  collectedParticleSystem: {fileID: 8537409408864614356, guid: e1ed96f81c7c12343bb31592662de783,
+    type: 3}
 --- !u!114 &227804264516071458
 MonoBehaviour:
   m_ObjectHideFlags: 0

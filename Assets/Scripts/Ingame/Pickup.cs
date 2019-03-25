@@ -9,6 +9,7 @@ namespace MiniPlanetDefense
     public class Pickup : MonoBehaviour
     {
         [SerializeField] float extraDespawnDistance = 40f;
+        [SerializeField] ParticleSystem collectedParticleSystem;
 
         [Inject] Constants constants;
         [Inject] Pool pool;
@@ -31,6 +32,12 @@ namespace MiniPlanetDefense
         
         public void Collect()
         {
+            if (collectedParticleSystem != null)
+            {
+                var particleSystem = pool.Get(collectedParticleSystem, transform.position, transform.rotation, transform.parent);
+                particleSystem.Play();
+            }
+
             pool.Release(gameObject);
         }
     }
