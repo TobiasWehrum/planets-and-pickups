@@ -19,6 +19,7 @@ namespace MiniPlanetDefense
         [Inject] PhysicsHelper physicsHelper;
         [Inject] Constants constants;
         [Inject] IngameUI ingameUI;
+        [Inject] SoundManager soundManager;
 
         new Rigidbody2D rigidbody;
 
@@ -34,6 +35,8 @@ namespace MiniPlanetDefense
         int score;
 
         bool destroyed;
+
+        Planet previousPlanet;
         
         void Awake()
         {
@@ -74,6 +77,13 @@ namespace MiniPlanetDefense
         {
             var currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
             //Debug.Log(currentPlanet);
+
+            if ((currentPlanet != null) && (currentPlanet != previousPlanet))
+            {
+                soundManager.PlaySound(Sound.TouchPlanet);
+            }
+
+            previousPlanet = currentPlanet;
             
             if (currentPlanet == null)
             {
@@ -99,6 +109,8 @@ namespace MiniPlanetDefense
                     
                     rigidbody.velocity = jumpForceDirection * jumpImpulse;
                     currentPlanet = null;
+                    
+                    soundManager.PlaySound(Sound.Jump);
                 }
             }
 
@@ -175,6 +187,8 @@ namespace MiniPlanetDefense
                 var pickup = other.gameObject.GetComponent<Pickup>();
                 pickup.Collect();
 
+                soundManager.PlaySound(Sound.Pickup);
+                
                 score++;
                 ingameUI.SetScore(score);
             }
@@ -193,6 +207,8 @@ namespace MiniPlanetDefense
             destroyed = true;
 
             restartScreen.SetActive(true);
+            
+            soundManager.PlaySound(Sound.Death);
         }
     }
 }
