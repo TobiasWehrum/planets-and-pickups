@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Takes care of computing the gravity and figuring out what current an entity (presumably the player)
+    /// might currently be close on enough to say "entity is on the planet".
+    /// </summary>
     public class PhysicsHelper : MonoBehaviour
     {
         [SerializeField] float gravityMultiplier = 10f;

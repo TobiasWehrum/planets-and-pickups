@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Steers a <see cref="MoveInDirectionWhileAvoidingPlanets"/> script so that the main direction is always pointing towards the player.
+    /// </summary>
     [RequireComponent(typeof(MoveInDirectionWhileAvoidingPlanets))]
     public class SteerMoveInDirectionTowardsPlayer : MonoBehaviour
     {

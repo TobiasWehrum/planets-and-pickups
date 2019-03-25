@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A script that waits for a key to be pressed and then reloads the current scene.
+    /// </summary>
     public class PressKeyToRestart : MonoBehaviour
     {
         [SerializeField] KeyCode key = KeyCode.Space;

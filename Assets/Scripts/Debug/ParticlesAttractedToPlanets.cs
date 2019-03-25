@@ -3,6 +3,10 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A script that uses the attraction of the planets to set the velocity of particles. Originally planned as an ingame
+    /// effect, it proved to me too distracting, but it's still useful as a debug visualization.
+    /// </summary>
     [RequireComponent(typeof(ParticleSystem))]
     public class ParticlesAttractedToPlanets : MonoBehaviour
     {

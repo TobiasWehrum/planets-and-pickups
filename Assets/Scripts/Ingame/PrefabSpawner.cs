@@ -5,6 +5,9 @@ using Random = UnityEngine.Random;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Spawns a prefab each x seconds using a either Zenject directly or the <see cref="Pool"/>. Used e.g. for pickups and enemies.
+    /// </summary>
     public class PrefabSpawner : MonoBehaviour
     {
         [SerializeField] GameObject prefab;

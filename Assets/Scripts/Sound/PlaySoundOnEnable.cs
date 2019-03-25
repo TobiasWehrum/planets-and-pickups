@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Play a sound using the <see cref="SoundManager"/> in OnEnable().
+    /// </summary>
     public class PlaySoundOnEnable : MonoBehaviour
     {
         [SerializeField] Sound sound;

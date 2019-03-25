@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Follows another transform smoothly. Used for the camera following the player.
+    /// </summary>
     public class FollowTransform : MonoBehaviour
     {
         [SerializeField] Transform target;

@@ -3,6 +3,10 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Moves the attached entity in a main direction while evading planets orthogonally. Optionally also being attracted by the player.
+    /// </summary>
+    [RequireComponent(typeof(Rigidbody2D))]
     public class MoveInDirectionWhileAvoidingPlanets : MonoBehaviour
     {
         [SerializeField] float speed;

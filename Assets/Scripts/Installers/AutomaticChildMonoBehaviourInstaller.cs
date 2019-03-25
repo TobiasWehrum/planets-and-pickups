@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A Zenject installer that binds all <see cref="MonoBehaviour"/>s found in its children.
+    /// </summary>
     public class AutomaticChildMonoBehaviourInstaller : MonoInstaller
     {
         [SerializeField] bool printDebugInformation;

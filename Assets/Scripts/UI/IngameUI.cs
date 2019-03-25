@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// Provides access to the ingame UI.
+    /// </summary>
     public class IngameUI : MonoBehaviour
     {
         [SerializeField] Text textScore;

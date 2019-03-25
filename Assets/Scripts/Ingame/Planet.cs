@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A planet with a radius (and gravity as computed by the <see cref="PhysicsHelper"/>.
+    /// </summary>
     public class Planet : MonoBehaviour
     {
         [Inject] PhysicsHelper physicsHelper;

@@ -3,6 +3,10 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// The player. Can move on planets, jump, collect pickups and optionally also move while in the air.
+    /// Dies when touching an enemy.
+    /// </summary>
     public class Player : MonoBehaviour
     {
         [SerializeField] float moveSpeedOnPlanet;

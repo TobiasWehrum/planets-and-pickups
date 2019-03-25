@@ -3,15 +3,9 @@ using UnityEngine;
 
 namespace MiniPlanetDefense
 {
-    public enum Sound
-    {
-        Death,
-        Pickup,
-        Jump,
-        TouchPlanet,
-        EnemySpawned
-    }
-    
+    /// <summary>
+    /// A primitive sound manager, playing <see cref="AudioSource"/>s when called.
+    /// </summary>
     public class SoundManager : MonoBehaviour
     {
         [SerializeField] AudioSource death;

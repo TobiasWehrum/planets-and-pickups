@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A pickup to be collected by the player. Despawns itself when too far away from the playing field.
+    /// </summary>
     public class Pickup : MonoBehaviour
     {
         [SerializeField] float extraDespawnDistance = 40f;

@@ -3,6 +3,9 @@ using Zenject;
 
 namespace MiniPlanetDefense
 {
+    /// <summary>
+    /// A Zenject installer that binds one or more <see cref="ScriptableObject"/>s.
+    /// </summary>
     public class ScriptableObjectListInstaller : MonoInstaller
     {
         [SerializeField] ScriptableObject[] scriptableObjects;
