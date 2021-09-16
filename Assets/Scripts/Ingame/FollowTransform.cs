@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 namespace MiniPlanetDefense
 {
@@ -7,11 +8,14 @@ namespace MiniPlanetDefense
     /// </summary>
     public class FollowTransform : MonoBehaviour
     {
-        [SerializeField] Transform target;
-        [SerializeField] float followMultiplier = 0.9f;
-
+        
+        [Inject] Player player;
+        [SerializeField] float followMultiplier = 0.05f;
+        private Transform target;
+        
         void Awake()
         {
+            target = player.gameObject.transform;
             var targetPosition = target.position;
             targetPosition.z = transform.position.z;
             transform.position = targetPosition;

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -16,7 +17,7 @@ namespace MiniPlanetDefense
         [SerializeField] float playerAttractionMaxDistance;
 
         [Inject] PhysicsHelper physicsHelper;
-        [Inject] Constants constants;
+        [Inject] GameArea gameArea;
         [Inject] Player player;
 
         new Rigidbody2D rigidbody;
@@ -25,6 +26,21 @@ namespace MiniPlanetDefense
         Vector2 orthogonalDirection;
         
         bool initialized;
+
+        private void OnDrawGizmos()
+        {
+            
+            if (mainDirection != null)
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawRay(transform.position, mainDirection);
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawRay(transform.position, orthogonalDirection);
+            }
+                
+            
+        }
+
 
         void Awake()
         {
@@ -65,7 +81,7 @@ namespace MiniPlanetDefense
 
             var distanceToCenter = transform.position.magnitude;
             var directionToCenter = -(transform.position / distanceToCenter);
-            var closenessToCenterPercent = Mathf.Clamp01(distanceToCenter / constants.playfieldRadius);
+            var closenessToCenterPercent = Mathf.Clamp01(distanceToCenter / gameArea.Radius);
             var gravityTowardsCenter = borderAvoidanceCurve.Evaluate(closenessToCenterPercent) * borderAvoidanceMultiplier;
             evasionGravity += gravityTowardsCenter * directionToCenter;
 

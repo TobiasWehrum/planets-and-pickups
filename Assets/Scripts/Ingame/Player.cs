@@ -1,5 +1,8 @@
+using System;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
+
 
 namespace MiniPlanetDefense
 {
@@ -9,7 +12,7 @@ namespace MiniPlanetDefense
     /// </summary>
     public class Player : MonoBehaviour
     {
-        [SerializeField] float moveSpeedOnPlanet;
+        [SerializeField] float moveSpeedOnPlanet = 650.0f;
         [SerializeField] float freeMovementSpeed = 10;
         [SerializeField] float jumpImpulse = 5;
         [SerializeField] float maxSpeed = 10f;
@@ -21,18 +24,14 @@ namespace MiniPlanetDefense
         [SerializeField] ParticleSystem deathParticleSystem;
         
         [Inject] PhysicsHelper physicsHelper;
-        [Inject] Constants constants;
+        [Inject] GameArea gameArea;
         [Inject] IngameUI ingameUI;
         [Inject] SoundManager soundManager;
 
         new Rigidbody2D rigidbody;
 
         float radius;
-
-        bool hasMovedHorizontallyLastFrame;
-        int horizontalMovementDirectionMultiplier = 1;
-
-        Vector2 freeMoveDirection;
+        
 
         bool isColoredOnPlanet;
 
@@ -41,31 +40,111 @@ namespace MiniPlanetDefense
         bool destroyed;
 
         Planet previousPlanet;
+        Planet currentPlanet;
+
+        private bool isRotatingClockwise = false;
+        
+        public float currentAngle;
+
+
+        public bool manualMovementOnPlanet = false;
+        bool hasMovedHorizontallyLastFrame;
+        int horizontalMovementDirectionMultiplier = 1;
+        Vector2 freeMoveDirection;
+
+        private Vector2 gravitationalForce;
         
         void Awake()
         {
+            Reset(transform.position);
+        }
+
+
+        public void Reset(Vector3 pos)
+        {
             rigidbody = GetComponent<Rigidbody2D>();
-
             radius = transform.localScale.x / 2f;
-
+            
             isColoredOnPlanet = false;
             RefreshColor();
+
+            
+            transform.position = pos;
+            
+            trailRenderer.Clear();
+        }
+
+        void GetDirectionForOrbit()
+        {
+            // Create vector r from planet center to player
+            Vector2 c = currentPlanet.transform.position; // center pos
+            Vector2 p = transform.position;
+            Vector2 r = (p-c).normalized; // vector from c to player
+
+            // Create perp t of above (tangent on landing point)
+            Vector2 t = Vector2.Perpendicular(r);
+
+            // Project player vel v onto t 
+            Vector2 v = rigidbody.velocity.normalized;
+            float tangvMag = Vector2.Dot(v, t);
+
+            // if 0 < v --> clockwise, else counterclockwise
+            if (0 < tangvMag)
+                isRotatingClockwise = true;
+
+            else
+                isRotatingClockwise = false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            
+            if (currentPlanet != null)
+            {
+                Vector2 p = GetPositionOnCircle(currentAngle);
+                Gizmos.DrawLine(currentPlanet.transform.position, p);
+                Gizmos.DrawSphere(currentPlanet.transform.position, 0.1f);
+            }
+
+            if (rigidbody != null)
+            {
+                Gizmos.color = Color.green;
+                Vector2 v = rigidbody.velocity.normalized * 5.0f;
+                Gizmos.DrawRay(transform.position, v);
+            
+            }
+
+            Gizmos.color = new Color(0, 0, 255, 0.2f);
+            Gizmos.DrawSphere(transform.position, radius);
+
+            if (gravitationalForce != null)
+            {
+                Gizmos.color = Color.white;
+                Gizmos.DrawRay(transform.position, gravitationalForce);
+            }
+
         }
 
         void FixedUpdate()
         {
-            var currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
+            
+            // Gravitational attraction 
             if (currentPlanet == null)
             {
-                rigidbody.AddForce(physicsHelper.GetGravityAtPosition(transform.position, radius));
-                rigidbody.AddForce(freeMoveDirection * freeMovementSpeed);
+                gravitationalForce =
+                    physicsHelper.GetGravityAtPosition(transform.position, radius);
+                rigidbody.AddForce(gravitationalForce);
             }
             else
             {
-                var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter(currentPlanet).normalized;
-                rigidbody.AddForce(directionTowardsPlanetCenter * physicsHelper.GravityOnPlanet);
+                if (manualMovementOnPlanet)
+                { 
+                    var directionTowardsPlanetCenter = CalculateDeltaToPlanetCenter(currentPlanet).normalized;
+                    rigidbody.AddForce(directionTowardsPlanetCenter * physicsHelper.GravityOnPlanet);
+                }
             }
-
+            
             // Cap max speed
             if (maxSpeed > 0)
             {
@@ -77,68 +156,64 @@ namespace MiniPlanetDefense
             }
         }
 
-        void Update()
-        {
-            var currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
-            //Debug.Log(currentPlanet);
 
+        void LandedOnPlanet()
+        {
+            Debug.Log("Landed on " + currentPlanet.name);
+            soundManager.PlaySound(Sound.TouchPlanet);
+            GetDirectionForOrbit();
+            currentAngle = GetCurrentAngleOnCircle();
+            transform.position = GetPositionOnCircle(currentAngle);
+            rigidbody.velocity = Vector2.zero;
+            
+            
+        }
+
+        void Update()
+        { 
+            currentPlanet = physicsHelper.GetCurrentPlanet(rigidbody.position, radius + onPlanetRadius);
             if ((currentPlanet != null) && (currentPlanet != previousPlanet))
             {
-                soundManager.PlaySound(Sound.TouchPlanet);
+                LandedOnPlanet();
             }
 
             previousPlanet = currentPlanet;
             
-            if (currentPlanet == null)
+            if (currentPlanet == null) // if no current planet
             {
-                FreelyMoveInDirections();
-                RestrictPlayerPosition();
+//                RestrictPlayerPositionInField();
             }
             else
             {
-                freeMoveDirection.x = 0;
-                freeMoveDirection.y = 0;
+                gravitationalForce = Vector2.zero;
+                if (manualMovementOnPlanet)
+                {
+                    freeMoveDirection.x = 0;
+                    freeMoveDirection.y = 0;
+                    MoveAroundPlanet(currentPlanet);
+                }
+                else
+                {
+                    OrbitPlanet();    
+                }
                 
-                MoveAroundPlanet(currentPlanet);
-
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
+                    Debug.Log("Jump!");
                     var jumpForceDirection = -CalculateDeltaToPlanetCenter(currentPlanet).normalized;
-                    /*
-                    var direction = Input.GetAxis("Horizontal");
-                    jumpForceDirection.x += jumpForceDirection.y * direction;
-                    jumpForceDirection.y -= jumpForceDirection.x * direction;
-                    jumpForceDirection.Normalize();
-                    */
-                    
                     rigidbody.velocity = jumpForceDirection * jumpImpulse;
                     currentPlanet = null;
-                    
                     soundManager.PlaySound(Sound.Jump);
                 }
             }
 
             SetColoredOnPlanet(currentPlanet != null);
         }
-
-        void FreelyMoveInDirections()
-        {
-            freeMoveDirection.x = Input.GetAxis("Horizontal");
-            freeMoveDirection.y = Input.GetAxis("Vertical");
-        }
         
-        void RestrictPlayerPosition()
-        {
-            var distanceFromCenterSqr = rigidbody.position.sqrMagnitude;
-            var maxDistanceFromCenter = constants.playfieldRadius - radius;
-            if (distanceFromCenterSqr > maxDistanceFromCenter * maxDistanceFromCenter)
-            {
-                rigidbody.position *= maxDistanceFromCenter / Mathf.Sqrt(distanceFromCenterSqr);
-            }
-        }
-
+        
         void MoveAroundPlanet(Planet planet)
         {
+            currentAngle = GetCurrentAngleOnCircle();
             var horizontal = Input.GetAxis("Horizontal");
             var isMovingHorizontallyThisFrame = horizontal != 0f;
 
@@ -160,6 +235,17 @@ namespace MiniPlanetDefense
 
             hasMovedHorizontallyLastFrame = isMovingHorizontallyThisFrame;
         }
+        
+        void RestrictPlayerPositionInField()
+        {
+            var distanceFromCenterSqr = (gameArea.Center - transform.position).sqrMagnitude;
+            var maxDistanceFromCenter = gameArea.Radius - radius;
+            if (distanceFromCenterSqr > maxDistanceFromCenter * maxDistanceFromCenter)
+            {
+                rigidbody.position *= maxDistanceFromCenter / Mathf.Sqrt(distanceFromCenterSqr);
+            }
+        }
+        
 
         Vector3 CalculateDeltaToPlanetCenter(Planet planet)
         {
@@ -183,6 +269,8 @@ namespace MiniPlanetDefense
             trailRenderer.endColor = color;
         }
 
+        
+        
         void OnCollisionEnter2D(Collision2D other)
         {
             var otherGameObject = other.gameObject;
@@ -217,5 +305,62 @@ namespace MiniPlanetDefense
             
             soundManager.PlaySound(Sound.Death);
         }
+        
+        
+        
+        void OrbitPlanet()
+        {
+            float clockwiseMultiplier = (isRotatingClockwise) ? 1f : -1f;
+
+            float angularVelocity = moveSpeedOnPlanet / currentPlanet.Radius;
+            //Move object as orbit
+            currentAngle +=  angularVelocity * Time.deltaTime * clockwiseMultiplier;
+            currentAngle = currentAngle % 360.0f;
+            if(currentAngle < 0)
+                currentAngle += 360.0f;
+            transform.position = GetPositionOnCircle(currentAngle);
+        
+        }
+
+        /// <summary>
+        /// Gets cartesian position on circle 
+        /// </summary>
+        /// <param name="angle"></param> Angle must be in degrees 
+        /// <returns></returns>
+        protected Vector2 GetPositionOnCircle(float angle)
+        {
+            Vector2 centerPos = currentPlanet.transform.position;
+            float orbitRadius = currentPlanet.Radius + radius;
+            float rad_angle = angle * Mathf.Deg2Rad;
+            return new Vector2(
+                centerPos.x + Mathf.Cos(rad_angle) * orbitRadius,
+                centerPos.y + Mathf.Sin(rad_angle) * orbitRadius
+            );
+        }
+
+        
+        /// <summary>
+        /// Gets angle on circle in degrees (0-360)
+        /// </summary>
+        /// <returns></returns>
+        protected float GetCurrentAngleOnCircle()
+        {
+            Vector2 c = currentPlanet.transform.position; // center pos
+            Vector2 p = transform.position;
+            float orbitRadius = currentPlanet.Radius + radius;
+            Vector2 diff = (p-c)/ orbitRadius;
+
+            float theta_rad =  Mathf.Atan2(diff.y, diff.x);
+            float theta_deg =  theta_rad *  Mathf.Rad2Deg ;
+            if( theta_deg < 0.0 )
+            {
+                theta_deg += 360.0f;
+            } 
+
+            return theta_deg;
+
+        }
+        
+        
     }
 }

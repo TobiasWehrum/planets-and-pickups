@@ -15,12 +15,19 @@ namespace MiniPlanetDefense
 
         void Awake()
         {
-            Radius = transform.localScale.x / 2f;
-            Position = transform.position;
+            InitPlanet(transform.position, transform.localScale.x / 2f);
+        }
+
+        public void InitPlanet(Vector3 pos, float radius)
+        {
+            Radius = radius;
+            Position = pos;
         }
 
         void OnEnable()
         {
+            if (physicsHelper == null)
+                physicsHelper = FindObjectOfType<PhysicsHelper>();
             physicsHelper.RegisterPlanet(this);
         }
 

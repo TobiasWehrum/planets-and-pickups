@@ -14,8 +14,9 @@ namespace MiniPlanetDefense
         [SerializeField] float spawnDelay = 5f;
         [SerializeField] [Range(0, 1)] float startPercent;
         [SerializeField] bool usePool;
-
-        [Inject] Constants constants;
+        
+        [Inject] GameArea gameArea;
+        [Inject] PhysicsHelper physicsHelper;
         [Inject] DiContainer diContainer;
         [Inject] Pool pool;
 
@@ -38,10 +39,12 @@ namespace MiniPlanetDefense
 
         void Spawn()
         {
-            var distanceFromCenter = constants.playfieldRadius;
+            var distanceFromCenter = gameArea.Radius;
             var angleRad = Random.value * Mathf.PI * 2;
             var position = new Vector3(Mathf.Cos(angleRad) * distanceFromCenter, Mathf.Sin(angleRad) * distanceFromCenter, 0);
-
+            position.x += gameArea.Center.x;
+            position.y += gameArea.Center.y;
+            
             if (usePool)
             {
                 pool.Get(prefab, position, Quaternion.identity, transform);

@@ -11,14 +11,14 @@ namespace MiniPlanetDefense
         [SerializeField] float extraDespawnDistance = 40f;
         [SerializeField] ParticleSystem collectedParticleSystem;
 
-        [Inject] Constants constants;
+        [Inject] GameArea gameArea;
         [Inject] Pool pool;
         
         float despawnDistanceSqr;
 
         void Awake()
         {
-            despawnDistanceSqr = Mathf.Pow(constants.playfieldRadius + extraDespawnDistance, 2);
+            despawnDistanceSqr = Mathf.Pow(gameArea.Radius + extraDespawnDistance, 2);
         }
         
         void Update()

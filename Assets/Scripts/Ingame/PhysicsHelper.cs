@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace MiniPlanetDefense
 {
@@ -15,18 +17,34 @@ namespace MiniPlanetDefense
         [SerializeField] float gravityMaxDistance = 10f;
         [SerializeField] bool planetGravityDependsOnRadius;
 
+        public Vector3 centroid = Vector3.zero;
+
         public float GravityOnPlanet => gravityMultiplier;
 
-        List<Planet> planets = new List<Planet>();
+        [SerializeField] List<Planet> planets = new List<Planet>();
+
+
+        [Inject] private GameArea gameArea;
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(centroid, 0.5f);
+            
+        }
+
 
         public void RegisterPlanet(Planet planet)
         {
+            Debug.Log($"<color=green>Add "+ planet.name + "</color>");
             planets.Add(planet);
+            centroid = GetCenterOfPlanetarySystem();
         }
 
         public void DeregisterPlanet(Planet planet)
         {
             planets.Remove(planet);
+            centroid = GetCenterOfPlanetarySystem();
         }
 
         public Vector3 GetGravityAtPosition(Vector3 position, float objectRadius)
@@ -64,5 +82,18 @@ namespace MiniPlanetDefense
 
             return null;
         }
+
+        private Vector3 GetCenterOfPlanetarySystem()
+        {
+            Vector3 center = Vector3.zero;
+            foreach (var planet in planets)
+            {
+                center += planet.Position;
+            }
+            center = center / planets.Count;
+            return center;
+        }
+        
+        
     }
 }
