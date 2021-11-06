@@ -28,7 +28,7 @@ jobs:
       - name: Checkout repository ⤵️
         uses: actions/checkout@v2
         with:
-          lfs: true
+          lfs: false
       # Cache
       - name: Cache library 💾
         uses: actions/cache@v1.1.0
