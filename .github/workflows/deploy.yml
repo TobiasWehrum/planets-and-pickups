@@ -58,11 +58,6 @@ jobs:
     name: Deploy OsX App to itch.io 📤
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-
     steps:
       - name: Download builds ⤵️
         uses: actions/download-artifact@v2
