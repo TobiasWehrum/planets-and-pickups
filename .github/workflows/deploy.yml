@@ -40,7 +40,7 @@ jobs:
             Library-
       # Build
       - name: Build project 🚧
-        uses: game-ci/unity-builder@master
+        uses: game-ci/unity-builder@v2
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
@@ -71,7 +71,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Deploy OSX app to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@v2
+        uses: josephbmanley/butler-publish-itchio-action@master
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
           CHANNEL: osx
