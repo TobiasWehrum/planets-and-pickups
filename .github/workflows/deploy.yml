@@ -40,7 +40,7 @@ jobs:
             Library-
       # Build
       - name: Build project 🚧
-        uses: webbertakken/unity-builder@v0.10
+        uses: game-ci/unity-builder@master
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
