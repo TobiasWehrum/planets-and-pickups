@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using MiniPlanetDefense;
 using UnityEngine;
 using Zenject;
+using Zchfvy.Plus;
 
 public class VariableRadiiGOSampler : MonoBehaviour
 {
+    public bool useRandomSeed = true;
     public int seed;
     public float maxRadius = 1f,minRadius = 0.5f;
     public float regionSize = 10f;
@@ -25,6 +27,8 @@ public class VariableRadiiGOSampler : MonoBehaviour
     private List<GameObject> gos;
 
     private Vector3 center;
+
+    
     
     void OnValidate()
     {
@@ -34,6 +38,8 @@ public class VariableRadiiGOSampler : MonoBehaviour
 
     void Start()
     {
+        if (useRandomSeed)
+            seed = (int) DateTime.Now.Ticks;
         gos = new List<GameObject>();
         center = new Vector3(regionSize / 2, regionSize / 2, 0.5f);
         Reset();
@@ -83,7 +89,7 @@ public class VariableRadiiGOSampler : MonoBehaviour
     }
 
 
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(center,new Vector3(regionSize,regionSize,1f));
@@ -102,7 +108,7 @@ public class VariableRadiiGOSampler : MonoBehaviour
         }
         
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, regionSize/2);
+        GizmosPlus.Circle(center,  Vector3.back*regionSize/2);
         
         
     }

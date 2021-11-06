@@ -26,14 +26,6 @@ namespace MiniPlanetDefense
 
         [Inject] private GameArea gameArea;
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(centroid, 0.5f);
-            
-        }
-
-
         public void RegisterPlanet(Planet planet)
         {
             Debug.Log($"<color=green>Add "+ planet.name + "</color>");

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zchfvy.Plus;
 
 public class VaribleRadiiTester : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class VaribleRadiiTester : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        
+        
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(new Vector3(regionSize/2,regionSize/2,0.5f),new Vector3(regionSize,regionSize,1f));
         if (points != null)
@@ -41,9 +44,9 @@ public class VaribleRadiiTester : MonoBehaviour
         }
         
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(
+        GizmosPlus.Circle(
             new Vector3(regionSize/2,regionSize/2,0.5f),
-            regionSize/2
+            new Vector3(regionSize/2,regionSize/2,1)
         );
         
         

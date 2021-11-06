@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
+using Zchfvy.Plus;
 
 
 namespace MiniPlanetDefense
@@ -111,8 +112,7 @@ namespace MiniPlanetDefense
             {
                 Gizmos.color = Color.green;
                 Vector2 v = rigidbody.velocity.normalized * 5.0f;
-                Gizmos.DrawRay(transform.position, v);
-            
+                GizmosPlus.Arrow(transform.position, v);
             }
 
             Gizmos.color = new Color(0, 0, 255, 0.2f);
@@ -121,7 +121,7 @@ namespace MiniPlanetDefense
             if (gravitationalForce != null)
             {
                 Gizmos.color = Color.white;
-                Gizmos.DrawRay(transform.position, gravitationalForce);
+                GizmosPlus.Arrow(transform.position, gravitationalForce);
             }
 
         }
@@ -276,8 +276,8 @@ namespace MiniPlanetDefense
             var otherGameObject = other.gameObject;
             if (otherGameObject.CompareTag(Tag.Pickup))
             {
-                var pickup = other.gameObject.GetComponent<Pickup>();
-                pickup.Collect();
+                var pickup = other.gameObject.GetComponent<NPC>();
+                pickup.RemoveNPC();
 
                 soundManager.PlaySound(Sound.Pickup);
                 

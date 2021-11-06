@@ -131,11 +131,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5091185140621542450, guid: 2f9b5ded0a450411a83947ef9572bd72,
-        type: 3}
-      propertyPath: minRadius
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 5091185140621542451, guid: 2f9b5ded0a450411a83947ef9572bd72,
         type: 3}
       propertyPath: m_RootOrder
@@ -195,11 +190,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: VariableRadiiPlanetSampler
-      objectReference: {fileID: 0}
-    - target: {fileID: 5091185140621542453, guid: 2f9b5ded0a450411a83947ef9572bd72,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f9b5ded0a450411a83947ef9572bd72, type: 3}
@@ -377,6 +367,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5418459075992709802, guid: 30772d1a89cd24bb7adc9c169cdc6d18,
+        type: 3}
+      propertyPath: usePool
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5418459075992709803, guid: 30772d1a89cd24bb7adc9c169cdc6d18,
         type: 3}
       propertyPath: m_RootOrder

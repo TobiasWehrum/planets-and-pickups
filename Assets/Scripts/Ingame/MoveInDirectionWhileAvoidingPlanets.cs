@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zchfvy.Plus;
 using Zenject;
 
 namespace MiniPlanetDefense
@@ -11,7 +12,7 @@ namespace MiniPlanetDefense
     public class MoveInDirectionWhileAvoidingPlanets : MonoBehaviour
     {
         [SerializeField] float speed;
-        [SerializeField] float planetAvoidanceMultiplier = 1f;
+        [SerializeField] float planetAvoidanceMultiplier = 3f;
         [SerializeField] AnimationCurve borderAvoidanceCurve;
         [SerializeField] float borderAvoidanceMultiplier = 1f;
         [SerializeField] float playerAttractionMaxDistance;
@@ -21,15 +22,22 @@ namespace MiniPlanetDefense
         [Inject] Player player;
 
         new Rigidbody2D rigidbody;
-        
+
         Vector2 mainDirection;
         Vector2 orthogonalDirection;
-        
+        private Vector2 directionToCenter;
+        private Vector2 repulsionDirection;
+        private Vector2 movementDirection;
+        private float closenessToCenterPercent;
+
+        private Vector2 gravitationalRepulsionFromPlanets;
+        private Vector2 gravitationalAttractionFromCenter;
+
+
         bool initialized;
 
         private void OnDrawGizmos()
         {
-            
             if (mainDirection != null)
             {
                 Gizmos.color = Color.magenta;
@@ -37,10 +45,22 @@ namespace MiniPlanetDefense
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawRay(transform.position, orthogonalDirection);
             }
-                
-            
         }
 
+
+        private void OnDrawGizmosSelected()
+        {
+//            Gizmos.color = Color.white;
+//            GizmosPlus.Arrow(transform.position, directionToCenter);
+            Gizmos.color = Color.blue;
+            GizmosPlus.Arrow(transform.position, repulsionDirection);
+            Gizmos.color = Color.white;
+            GizmosPlus.Arrow(transform.position, gravitationalAttractionFromCenter);
+            Gizmos.color = Color.green;
+            GizmosPlus.Arrow(transform.position, gravitationalRepulsionFromPlanets);
+//            Gizmos.color = Color.green;
+//            GizmosPlus.Arrow(transform.position, movementDirection);
+        }
 
         void Awake()
         {
@@ -67,43 +87,72 @@ namespace MiniPlanetDefense
         {
             if (initialized)
                 return;
-            
+
             mainDirection = -transform.position.normalized;
             orthogonalDirection = new Vector2(mainDirection.y, -mainDirection.x);
             initialized = true;
         }
-        
-        void Update()
+
+
+        void UpdatePointersToCenter()
         {
-            InitializeIfNecessary();
-            
-            var evasionGravity = -physicsHelper.GetGravityAtPosition(rigidbody.position, 0f) * planetAvoidanceMultiplier;
+            directionToCenter = gameArea.Center - transform.position;
+            closenessToCenterPercent =
+                Mathf.Clamp01(directionToCenter.magnitude /
+                              gameArea.Radius); // 1 if far, 0 if at center
+        }
 
-            var distanceToCenter = transform.position.magnitude;
-            var directionToCenter = -(transform.position / distanceToCenter);
-            var closenessToCenterPercent = Mathf.Clamp01(distanceToCenter / gameArea.Radius);
-            var gravityTowardsCenter = borderAvoidanceCurve.Evaluate(closenessToCenterPercent) * borderAvoidanceMultiplier;
-            evasionGravity += gravityTowardsCenter * directionToCenter;
+        Vector2 GetRepulsionFromPlanets()
+        {
+            gravitationalRepulsionFromPlanets =
+                physicsHelper.GetGravityAtPosition(transform.position, 2) *
+                -planetAvoidanceMultiplier;
 
-            var evadeDirection = Vector3.Project(evasionGravity, orthogonalDirection);
+            float gravityTowardsCenter =
+                borderAvoidanceCurve.Evaluate(closenessToCenterPercent) *
+                borderAvoidanceMultiplier;
 
-            var direction = ((Vector3) mainDirection + evadeDirection).normalized;
+            gravitationalAttractionFromCenter = (gravityTowardsCenter * directionToCenter);
 
+
+            Vector2 repulsionDirection =
+                Vector3.Project(gravitationalAttractionFromCenter + gravitationalRepulsionFromPlanets, orthogonalDirection);
+            return repulsionDirection;
+        }
+
+        Vector2 LerpDirectionIfCloseToPlayer(Vector3 direction)
+        {
             if ((playerAttractionMaxDistance > 0) && (player.isActiveAndEnabled))
             {
                 var playerDelta = player.transform.position - transform.position;
                 var playerDistanceSqr = playerDelta.sqrMagnitude;
-                if (playerDistanceSqr <= (playerAttractionMaxDistance * playerAttractionMaxDistance))
+                if (playerDistanceSqr <=
+                    (playerAttractionMaxDistance * playerAttractionMaxDistance))
                 {
                     var playerDistance = Mathf.Sqrt(playerDistanceSqr);
                     var playerDirection = playerDelta.normalized;
-                    var playerNearnessPercent = 1 - (playerDistance / playerAttractionMaxDistance);
+                    var playerNearnessPercent =
+                        1 - (playerDistance / playerAttractionMaxDistance);
 
-                    direction = Vector3.Lerp(direction, playerDirection, playerNearnessPercent).normalized;
+                    direction = Vector3
+                        .Lerp(direction, playerDirection, playerNearnessPercent)
+                        .normalized;
                 }
             }
 
-            rigidbody.velocity = direction * speed;
+            return direction;
+        }
+
+        void Update()
+        {
+            InitializeIfNecessary();
+
+            UpdatePointersToCenter();
+            repulsionDirection = GetRepulsionFromPlanets();
+
+            movementDirection = (mainDirection + repulsionDirection).normalized;
+            movementDirection = LerpDirectionIfCloseToPlayer(movementDirection);
+            rigidbody.velocity = movementDirection * speed;
         }
     }
 }

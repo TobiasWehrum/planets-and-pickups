@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using Zenject;
+using Zchfvy.Plus;
 
 namespace MiniPlanetDefense
 {
@@ -12,6 +14,14 @@ namespace MiniPlanetDefense
         [Inject] Player player;
         
         MoveInDirectionWhileAvoidingPlanets moveInDirectionWhileAvoidingPlanets;
+        private Vector3 dirToPlayer;
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            if (dirToPlayer!=null)
+                GizmosPlus.Arrow(transform.position, dirToPlayer);
+        }
 
         void Awake()
         {
@@ -23,8 +33,8 @@ namespace MiniPlanetDefense
             if (!player.isActiveAndEnabled)
                 return;
             
-            var deltaToPlayer = player.transform.position - transform.position;
-            moveInDirectionWhileAvoidingPlanets.UpdateMainDirection(deltaToPlayer.normalized);
+            dirToPlayer = player.transform.position - transform.position;
+            moveInDirectionWhileAvoidingPlanets.UpdateMainDirection(dirToPlayer.normalized);
         }
     }
 }
