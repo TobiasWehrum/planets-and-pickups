@@ -58,6 +58,11 @@ jobs:
     name: Deploy OsX App to itch.io 📤
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+
     steps:
       - name: Download builds ⤵️
         uses: actions/download-artifact@v2
@@ -66,7 +71,7 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Deploy OSX app to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
+        uses: josephbmanley/butler-publish-itchio-action@v2
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
           CHANNEL: osx
