@@ -54,10 +54,24 @@ jobs:
           path: build
           # ls ./build --> StandaloneOSX/ StandaloneWindows64/ ... WebGL
 
-  deployOSX:
-    name: Deploy OsX App to itch.io 📤
+
+  deployApp:
+    name: Deploy App to itch.io 📤
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel:
+          - osx
+          - linux
+          - windows
+          - html5
+        package:
+          - StandaloneOSX
+          - StandaloneLinux64
+          - StandaloneWindows64
+          - WebGL
     steps:
       - name: Download builds ⤵️
         uses: actions/download-artifact@v2
@@ -69,68 +83,7 @@ jobs:
         uses: josephbmanley/butler-publish-itchio-action@master
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-          CHANNEL: osx
+          CHANNEL:  ${{ matrix.channel }}
           ITCH_GAME: looper
           ITCH_USER: avivajpeyi
-          PACKAGE: StandaloneOSX
-
-  deployLinux:
-    name: Deploy Linux App to itch.io 📤
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download builds ⤵️
-        uses: actions/download-artifact@v2
-        with:
-          name: Build
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Deploy linux app to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-          CHANNEL: linux
-          ITCH_GAME: looper
-          ITCH_USER: avivajpeyi
-          PACKAGE: StandaloneLinux64
-
-
-  deployWindows:
-    name: Deploy Windows App to itch.io 📤
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download builds ⤵️
-        uses: actions/download-artifact@v2
-        with:
-          name: Build
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Deploy windows app to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-          CHANNEL: windows
-          ITCH_GAME: looper
-          ITCH_USER: avivajpeyi
-          PACKAGE: StandaloneWindows64
-
-  deployHTML:
-    name: Deploy HTML App to itch.io 📤
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download builds ⤵️
-        uses: actions/download-artifact@v2
-        with:
-          name: Build
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Deploy HTML build to itch.io
-        uses: josephbmanley/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-          CHANNEL: html5
-          ITCH_GAME: looper
-          ITCH_USER: avivajpeyi
-          PACKAGE: WebGL
+          PACKAGE:  ${{ matrix.package }}
