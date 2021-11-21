@@ -19,9 +19,9 @@ jobs:
         unityVersion:
           - 2020.3.22f1
         targetPlatform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          # - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          # - StandaloneLinux64 # Build a Linux 64-bit standalone.
           - WebGL # Build a HTML playable in browser
     steps:
       # Checkout
@@ -79,7 +79,7 @@ jobs:
           name: Build
       - name: Display structure of downloaded files
         run: ls -R
-      - name: Deploy OSX app to itch.io
+      - name: Deploy~ app to itch.io
         uses: josephbmanley/butler-publish-itchio-action@master
         env:
           BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
