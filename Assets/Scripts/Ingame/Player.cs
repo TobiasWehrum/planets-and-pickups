@@ -25,7 +25,7 @@ namespace MiniPlanetDefense
         [SerializeField] ParticleSystem deathParticleSystem;
 
         [SerializeField] private MicInput micInput;
-        
+
         [Inject] PhysicsHelper physicsHelper;
         [Inject] GameArea gameArea;
         [Inject] IngameUI ingameUI;
@@ -343,10 +343,18 @@ namespace MiniPlanetDefense
         {
             if (Input.GetKeyDown(KeyCode.Space))
                 return true;
-            
-            if (MicInput.loudnessInDb > MicInput.medianLoudnessInDb*1.2)
+
+            if (MicInput.loudnessInDb > MicInput.medianLoudnessInDb * 1.2)
+            {
+                Debug.Log(
+                    "Mic loudness: median " +
+                    MicInput.medianLoudnessInDb.ToString("####") +
+                    " dB, curr " + MicInput.loudnessInDb.ToString("####")
+                );
                 return true;
-            
+            }
+
+
             return false;
         }
     }

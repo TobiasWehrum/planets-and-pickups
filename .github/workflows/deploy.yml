@@ -63,14 +63,14 @@ jobs:
       fail-fast: false
       matrix:
         channel:
-          - osx
-          - linux
-          - windows
+          # - osx
+          # - linux
+          # - windows
           - html5
         package:
-          - StandaloneOSX
-          - StandaloneLinux64
-          - StandaloneWindows64
+          # - StandaloneOSX
+          # - StandaloneLinux64
+          # - StandaloneWindows64
           - WebGL
     steps:
       - name: Download builds ⤵️

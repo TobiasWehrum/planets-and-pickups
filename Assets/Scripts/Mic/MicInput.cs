@@ -109,11 +109,11 @@ public class MicInput : MonoBehaviour
         loudness = GetLoudness();
         loudnessInDb = GetLoudnessInDb();
         medianLoudnessInDb = getMedianLoudness();
-        Debug.Log(
-            "Mic loudness: median " + 
-            medianLoudnessInDb.ToString("####") + 
-            " dB, curr " + loudnessInDb.ToString("####")
-            );
+//        Debug.Log(
+//            "Mic loudness: median " + 
+//            medianLoudnessInDb.ToString("####") + 
+//            " dB, curr " + loudnessInDb.ToString("####")
+//            );
     }
 
 

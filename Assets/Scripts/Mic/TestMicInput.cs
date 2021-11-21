@@ -7,12 +7,17 @@
 using UnityEngine;
 
 
-
 public class TestMicInput : MonoBehaviour
 {
     void Update()
     {
-        gameObject.transform.localScale = new Vector3(1.0f, 1.0f + (MicInput.loudness * 10.0f), 1.0f);
-    }
+        var louduness = MicInput.loudnessInDb/MicInput.medianLoudnessInDb;
 
+        if (louduness < 500)
+            gameObject.transform.localScale = new Vector3(
+                1.0f + 10*louduness,
+                1.0f,
+                1.0f
+            );
+    }
 }
