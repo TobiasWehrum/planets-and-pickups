@@ -21,6 +21,7 @@ public class MicInput : MonoBehaviour
     public static float medianLoudnessInDb;
     public float maxLoudnessInDb=100;
     public float minLoudnessInDb=0;
+    public float threshold = 100;
     public bool trigger;
     
     
@@ -97,9 +98,9 @@ public class MicInput : MonoBehaviour
 
     void UpdateCache()
     {
-        if (loudnessDBCache.Count < 20)
+        if (loudnessDBCache.Count < 100)
         {
-            loudnessDBCache.Enqueue(loudnessInDb);
+            loudnessDBCache.Enqueue(maxLoudnessInDb);
         }
         else
         {
@@ -113,20 +114,22 @@ public class MicInput : MonoBehaviour
         
         loudness = GetLoudness();
         loudnessInDb = GetLoudnessInDb();
+        threshold = 0.5f * medianLoudnessInDb;
 
-        if (loudnessInDb < 0.5 * medianLoudnessInDb)
+        if (loudnessInDb < threshold)
         {
             trigger = true;
         }
         else
+        {
             trigger = false;
-        
-        if (!trigger)
             UpdateCache();
-        
+        }
+
+
         medianLoudnessInDb = getMedianLoudness();
         UpdateGraphs();
-        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
+        
 
     }
 
@@ -159,11 +162,11 @@ public class MicInput : MonoBehaviour
     void SetupDebuggers()
     {
         // Set up graph properties using our graph keys
-        DebugGUI.SetGraphProperties("MicInput", "Input", 0, 100, 0, new Color(0, 1, 1),  
-        true);
+        DebugGUI.SetGraphProperties("MicInput", "Input", 0, 100, 0, new Color(0, 1, 1),false);
         DebugGUI.SetGraphProperties("Median", "Median", 0, 100, 0, new Color(1, 0.5f, 1), true);
         DebugGUI.SetGraphProperties("Max", "Max", 0, 100, 0, new Color(1, 1, 0), true);
         DebugGUI.SetGraphProperties("Min", "Min", 0, 100, 0, new Color(1, 1, 0), true);
+        DebugGUI.SetGraphProperties("Thresh", "Threshold", 0, 100, 0, new Color(1, 0, 0), true);
     }
 
 
@@ -173,6 +176,9 @@ public class MicInput : MonoBehaviour
         DebugGUI.Graph(key:"Median", val:medianLoudnessInDb);
         DebugGUI.Graph(key:"Max", val:maxLoudnessInDb);
         DebugGUI.Graph(key:"Min", val:minLoudnessInDb);
+        DebugGUI.Graph(key:"Thresh", val:threshold);
+        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
+        DebugGUI.LogPersistent("MicName", String.Format("Mic: {0}", _device));
     }
 
     //stop mic when loading a new level or quit application
@@ -190,7 +196,9 @@ public class MicInput : MonoBehaviour
         DebugGUI.RemoveGraph("Median");
         DebugGUI.RemoveGraph("Max");
         DebugGUI.RemoveGraph("Min");
+        DebugGUI.RemoveGraph("Thresh");
         DebugGUI.RemovePersistent("trigger");
+        DebugGUI.RemovePersistent("MicName");
     }
 
 
@@ -215,7 +223,7 @@ public class MicInput : MonoBehaviour
         }
         else
         {
-            median = 1000;
+            median = maxLoudnessInDb;
         }
         
 

@@ -92,7 +92,7 @@ public class VariableRadiiGOSampler : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(center,new Vector3(regionSize,regionSize,1f));
+        
         if (points != null)
         {
             foreach (VariableRadiiDiskSampler.Point point in points)
@@ -108,7 +108,8 @@ public class VariableRadiiGOSampler : MonoBehaviour
         }
         
         Gizmos.color = Color.red;
-        GizmosPlus.Circle(center,  Vector3.back*regionSize/2);
+//        GizmosPlus.Circle(center,  Vector3.back*regionSize/2);
+//        Gizmos.DrawWireCube(center,new Vector3(regionSize,regionSize,1f));
         
         
     }
