@@ -16,8 +16,13 @@ public class MicInput : MonoBehaviour
     #endregion
 
     public static float loudness;
+    
     public static float loudnessInDb;
     public static float medianLoudnessInDb;
+    public float maxLoudnessInDb=100;
+    public float minLoudnessInDb=0;
+    public bool trigger;
+    
     
 
     AudioClip _clipRecord;
@@ -105,15 +110,24 @@ public class MicInput : MonoBehaviour
 
     void Update()
     {
-        UpdateCache();
+        
         loudness = GetLoudness();
         loudnessInDb = GetLoudnessInDb();
+
+        if (loudnessInDb < 0.5 * medianLoudnessInDb)
+        {
+            trigger = true;
+        }
+        else
+            trigger = false;
+        
+        if (!trigger)
+            UpdateCache();
+        
         medianLoudnessInDb = getMedianLoudness();
-//        Debug.Log(
-//            "Mic loudness: median " + 
-//            medianLoudnessInDb.ToString("####") + 
-//            " dB, curr " + loudnessInDb.ToString("####")
-//            );
+        UpdateGraphs();
+        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
+
     }
 
 
@@ -138,6 +152,27 @@ public class MicInput : MonoBehaviour
         InitMic();
         _isInitialized = true;
         Instance = this;
+        
+        SetupDebuggers();
+    }
+
+    void SetupDebuggers()
+    {
+        // Set up graph properties using our graph keys
+        DebugGUI.SetGraphProperties("MicInput", "Input", 0, 100, 0, new Color(0, 1, 1),  
+        true);
+        DebugGUI.SetGraphProperties("Median", "Median", 0, 100, 0, new Color(1, 0.5f, 1), true);
+        DebugGUI.SetGraphProperties("Max", "Max", 0, 100, 0, new Color(1, 1, 0), true);
+        DebugGUI.SetGraphProperties("Min", "Min", 0, 100, 0, new Color(1, 1, 0), true);
+    }
+
+
+    void UpdateGraphs()
+    {
+        DebugGUI.Graph(key:"MicInput", val:loudnessInDb);
+        DebugGUI.Graph(key:"Median", val:medianLoudnessInDb);
+        DebugGUI.Graph(key:"Max", val:maxLoudnessInDb);
+        DebugGUI.Graph(key:"Min", val:minLoudnessInDb);
     }
 
     //stop mic when loading a new level or quit application
@@ -149,6 +184,13 @@ public class MicInput : MonoBehaviour
     void OnDestroy()
     {
         StopMicrophone();
+        
+        // Clean up our logs and graphs when this object is destroyed
+        DebugGUI.RemoveGraph("MicInput");
+        DebugGUI.RemoveGraph("Median");
+        DebugGUI.RemoveGraph("Max");
+        DebugGUI.RemoveGraph("Min");
+        DebugGUI.RemovePersistent("trigger");
     }
 
 

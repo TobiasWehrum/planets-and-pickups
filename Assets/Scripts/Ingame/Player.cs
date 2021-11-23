@@ -344,7 +344,7 @@ namespace MiniPlanetDefense
             if (Input.GetKeyDown(KeyCode.Space))
                 return true;
 
-            if (MicInput.loudnessInDb > MicInput.medianLoudnessInDb * 1.2)
+            if (MicInput.loudnessInDb < 0.5 * MicInput.medianLoudnessInDb)
             {
                 Debug.Log(
                     "Mic loudness: median " +
