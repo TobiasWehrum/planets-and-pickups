@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class Timer : MonoBehaviour
 {
+
     [SerializeField] private float timeRemaining;
 
     public bool timerIsRunning = false;
-
-
+    public bool timeUp = false;
+    
+    
     public void Reset()
     {
         timeRemaining = 0;
@@ -18,6 +20,9 @@ public class Timer : MonoBehaviour
 
     public void StartTimer(int seconds)
     {
+        Debug.Log("start");
+        Reset();
+        timeUp = false;
         timeRemaining = seconds;
         timerIsRunning = true;
     }
@@ -34,6 +39,7 @@ public class Timer : MonoBehaviour
             {
                 Debug.Log("Time has run out!");
                 Reset();
+                timeUp = true;
             }
         }
     }

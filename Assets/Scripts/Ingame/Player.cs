@@ -36,6 +36,8 @@ namespace MiniPlanetDefense
         float radius;
 
 
+        private Timer timer;
+
         bool isColoredOnPlanet;
 
         int score;
@@ -62,14 +64,17 @@ namespace MiniPlanetDefense
         void Awake()
         {
             Application.targetFrameRate = -1;
+            timer = gameObject.AddComponent<Timer>();
             Reset(transform.position);
             micInput = FindObjectOfType<MicInput>();
+            
         }
 
 
         public void Reset(Vector3 pos)
         {
             
+            timer.StartTimer(60);
             
             rigidbody = GetComponent<Rigidbody2D>();
             radius = transform.localScale.x / 2f;
@@ -211,6 +216,13 @@ namespace MiniPlanetDefense
             }
 
             SetColoredOnPlanet(currentPlanet != null);
+            
+            ingameUI.SetTime(timer.timeInSeconds());
+            if (timer.timeUp)
+            {
+                EndRound();
+                
+            }
         }
 
 
@@ -284,12 +296,20 @@ namespace MiniPlanetDefense
             deathParticleSystem.transform.parent = null;
             deathParticleSystem.Play();
 
-            gameObject.SetActive(false);
-            destroyed = true;
-
-            ingameUI.ShowRestartScreen();
-
+ 
             soundManager.PlaySound(Sound.Death);
+            
+            EndRound();
+            gameObject.SetActive(false);
+
+        }
+
+        void EndRound()
+        {
+            ingameUI.ShowRestartScreen();
+            destroyed = true;
+            
+            
         }
 
 

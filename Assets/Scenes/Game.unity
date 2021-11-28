@@ -1654,6 +1654,11 @@ PrefabInstance:
       propertyPath: monoBehaviours.Array.data[1]
       value: 
       objectReference: {fileID: 1529750027}
+    - target: {fileID: 2296281851359467093, guid: 3101b198004574b6aad82dda34f52d76,
+        type: 3}
+      propertyPath: textTime
+      value: 
+      objectReference: {fileID: 140403969}
     - target: {fileID: 2296281851496412501, guid: 3101b198004574b6aad82dda34f52d76,
         type: 3}
       propertyPath: m_RootOrder

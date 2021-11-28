@@ -35,6 +35,9 @@ public class MicInput : MonoBehaviour
     public Queue<float> loudnessDBCache;
 
 
+    public bool showDebugging = false;
+
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     void InitMic()
     {
@@ -129,7 +132,21 @@ public class MicInput : MonoBehaviour
 
 
         medianLoudnessInDb = getMedianLoudness();
-        UpdateGraphs();
+
+
+        if (Input.GetKeyDown(KeyCode.D))
+            showDebugging = !showDebugging;
+        
+
+        if (showDebugging)
+        {
+            DebugGUI.Show();
+            UpdateGraphs();
+        }
+        else
+        {
+            DebugGUI.Hide();
+        }
     }
 
 
