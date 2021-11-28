@@ -98,7 +98,7 @@ public class MicInput : MonoBehaviour
     {
         if (loudnessDBCache.Count < 100)
         {
-            loudnessDBCache.Enqueue(maxLoudnessInDb);
+            loudnessDBCache.Enqueue(10);
         }
         else
         {

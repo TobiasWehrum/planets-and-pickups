@@ -10,11 +10,13 @@ namespace MiniPlanetDefense
     public class IngameUI : MonoBehaviour
     {
         [SerializeField] Text textScore;
+        [SerializeField] Text textTime;
         [SerializeField] GameObject introScreen;
         [SerializeField] GameObject restartScreen;
         [SerializeField] float restartScreenDelay = 1f;
         
         int score;
+        int time;
 
         void Awake()
         {
@@ -28,9 +30,21 @@ namespace MiniPlanetDefense
                 return;
 
             score = value;
-            textScore.text = score.ToString();
+            textScore.text = score.ToString("000");
         }
 
+        
+        public void SetTime(int value)
+        {
+            if (time == value)
+                return;
+
+            time = value;
+            textTime.text = time.ToString("00");
+        }
+
+        
+        
         public void ShowRestartScreen()
         {
             StartCoroutine(ShowRestartScreenCoroutine());

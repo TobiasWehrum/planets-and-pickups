@@ -57,6 +57,8 @@ namespace MiniPlanetDefense
 
         private Vector2 gravitationalForce;
 
+        private Timer timer;
+
         void Awake()
         {
             Reset(transform.position);
@@ -66,6 +68,9 @@ namespace MiniPlanetDefense
 
         public void Reset(Vector3 pos)
         {
+            
+            timer.Reset();
+            
             rigidbody = GetComponent<Rigidbody2D>();
             radius = transform.localScale.x / 2f;
 
