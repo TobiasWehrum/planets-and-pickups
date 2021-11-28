@@ -20,9 +20,10 @@ public class MicInput : MonoBehaviour
     public float maxLoudnessInDb = 100;
     public float minLoudnessInDb = 0;
     public float threshold = 100;
-    public bool trigger;
+    public static bool aboveThreshold;
+    public static int triggerCount = 0; 
 
-    [Range(0.05f, 0.9f)] public float thresholdFactor = 0.25f;
+    [Range(0.05f, 0.9f)] public float thresholdFactor = 0.75f;
 
 
     AudioClip _clipRecord;
@@ -39,19 +40,21 @@ public class MicInput : MonoBehaviour
     {
         Microphone.Init();
         Microphone.QueryAudioInput();
+        _device = Microphone.devices[0];
     }
     
     public float GetLoudness()
     {
         Microphone.Update();
-        float max_vol = -10000;
-        
-         for(int i = 0; i<Microphone.volumes.Length; i++)
-         {
-          if(max_vol < Microphone.volumes[i])
-           max_vol = Microphone.volumes[i];
-         }
-        return max_vol;
+//        float max_vol = -10000;
+//        
+//         for(int i = 0; i<Microphone.volumes.Length; i++)
+//         {
+//          if(max_vol < Microphone.volumes[i])
+//           max_vol = Microphone.volumes[i];
+//         }
+//        return max_vol;
+        return Microphone.volumes[0];
 
     }
 
@@ -111,21 +114,28 @@ public class MicInput : MonoBehaviour
     {
         loudness = GetLoudness();
         loudnessInDb = GetLoudnessInDb();
-        threshold = 0.5f * medianLoudnessInDb;
+        threshold = thresholdFactor * medianLoudnessInDb;
 
-        if (loudnessInDb < threshold)
+        if ((loudnessInDb < threshold) && !aboveThreshold)
         {
-            trigger = true;
+            triggerCount += 1;
+            aboveThreshold = true;
         }
         else
         {
-            trigger = false;
+            aboveThreshold = false;
             UpdateCache();
         }
 
 
         medianLoudnessInDb = getMedianLoudness();
         UpdateGraphs();
+    }
+
+
+    public static bool isTriggered()
+    {
+        return aboveThreshold;
     }
 
 
@@ -171,7 +181,7 @@ public class MicInput : MonoBehaviour
         DebugGUI.Graph(key: "MicInput", val: loudnessInDb);
         DebugGUI.Graph(key: "Thresh", val: threshold);
         DebugGUI.LogPersistent("MicName", String.Format("Mic: {0}", _device));
-        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
+        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", aboveThreshold));
     }
     
 
@@ -192,7 +202,6 @@ public class MicInput : MonoBehaviour
         DebugGUI.RemoveGraph("Thresh");
         DebugGUI.RemovePersistent("trigger");
         DebugGUI.RemovePersistent("MicName");
-        DebugGUI.RemovePersistent("FPS");
         DebugGUI.DeleteMe();
     }
 

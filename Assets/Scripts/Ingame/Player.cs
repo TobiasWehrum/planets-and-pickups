@@ -57,10 +57,11 @@ namespace MiniPlanetDefense
 
         private Vector2 gravitationalForce;
 
-        private Timer timer;
+
 
         void Awake()
         {
+            Application.targetFrameRate = -1;
             Reset(transform.position);
             micInput = FindObjectOfType<MicInput>();
         }
@@ -69,7 +70,6 @@ namespace MiniPlanetDefense
         public void Reset(Vector3 pos)
         {
             
-            timer.Reset();
             
             rigidbody = GetComponent<Rigidbody2D>();
             radius = transform.localScale.x / 2f;
@@ -349,16 +349,10 @@ namespace MiniPlanetDefense
             if (Input.GetKeyDown(KeyCode.Space))
                 return true;
 
-            if (MicInput.loudnessInDb < 0.5 * MicInput.medianLoudnessInDb)
+            if (MicInput.isTriggered())
             {
-                Debug.Log(
-                    "Mic loudness: median " +
-                    MicInput.medianLoudnessInDb.ToString("####") +
-                    " dB, curr " + MicInput.loudnessInDb.ToString("####")
-                );
                 return true;
             }
-
 
             return false;
         }
