@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Accessibility;
 
 public class DebugGUI : MonoBehaviour
 {
@@ -938,4 +939,26 @@ public class DebugGUI : MonoBehaviour
         if (Application.isPlaying)
             Destroy(boxTexture);
     }
+
+
+    public static void Hide()
+    {
+        Instance.displayGraphs = false;
+        Instance.displayLogs = false;
+    }
+    
+    public static void Show()
+    {
+        Instance.displayGraphs = true;
+        Instance.displayLogs = true;
+    }
+    
+    public static void DeleteMe()
+    {
+        Destroy(Instance.gameObject);
+    }
+
+    
+    
+    
 }

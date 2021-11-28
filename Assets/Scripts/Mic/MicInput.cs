@@ -4,8 +4,6 @@ using System.Linq;
 using UnityEngine;
 
 
-
-
 [RequireComponent(typeof(AudioSource))]
 public class MicInput : MonoBehaviour
 {
@@ -16,15 +14,16 @@ public class MicInput : MonoBehaviour
     #endregion
 
     public static float loudness;
-    
+
     public static float loudnessInDb;
     public static float medianLoudnessInDb;
-    public float maxLoudnessInDb=100;
-    public float minLoudnessInDb=0;
+    public float maxLoudnessInDb = 100;
+    public float minLoudnessInDb = 0;
     public float threshold = 100;
     public bool trigger;
-    
-    
+
+    [Range(0.05f, 0.9f)] public float thresholdFactor = 0.25f;
+
 
     AudioClip _clipRecord;
     AudioClip _recordedClip;
@@ -33,10 +32,9 @@ public class MicInput : MonoBehaviour
     private string _device;
 
     public Queue<float> loudnessDBCache;
-    
+
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-
     void InitMic()
     {
         Microphone.Init();
@@ -48,7 +46,7 @@ public class MicInput : MonoBehaviour
         Microphone.Update();
         float max_vol = -10000;
         
-         for(int i=0; i<Microphone.volumes.Length; i++)
+         for(int i = 0; i<Microphone.volumes.Length; i++)
          {
           if(max_vol < Microphone.volumes[i])
            max_vol = Microphone.volumes[i];
@@ -61,11 +59,11 @@ public class MicInput : MonoBehaviour
 
     void InitMic()
     {
-        
         if (_device == null)
         {
             _device = Microphone.devices[0];
         }
+
         _clipRecord = Microphone.Start(_device, true, 999, 44100);
     }
 
@@ -111,7 +109,6 @@ public class MicInput : MonoBehaviour
 
     void Update()
     {
-        
         loudness = GetLoudness();
         loudnessInDb = GetLoudnessInDb();
         threshold = 0.5f * medianLoudnessInDb;
@@ -129,8 +126,6 @@ public class MicInput : MonoBehaviour
 
         medianLoudnessInDb = getMedianLoudness();
         UpdateGraphs();
-        
-
     }
 
 
@@ -144,7 +139,7 @@ public class MicInput : MonoBehaviour
     //get data from microphone into audioclip
     public float GetLoudnessInDb()
     {
-        return Mathf.Abs( 20 * Mathf.Log10(Mathf.Abs(loudness)));
+        return Mathf.Abs(20 * Mathf.Log10(Mathf.Abs(loudness)));
     }
 
 
@@ -155,31 +150,30 @@ public class MicInput : MonoBehaviour
         InitMic();
         _isInitialized = true;
         Instance = this;
-        
+
         SetupDebuggers();
     }
 
     void SetupDebuggers()
     {
         // Set up graph properties using our graph keys
-        DebugGUI.SetGraphProperties("MicInput", "Input", 0, 100, 0, new Color(0, 1, 1),false);
-        DebugGUI.SetGraphProperties("Median", "Median", 0, 100, 0, new Color(1, 0.5f, 1), true);
-        DebugGUI.SetGraphProperties("Max", "Max", 0, 100, 0, new Color(1, 1, 0), true);
-        DebugGUI.SetGraphProperties("Min", "Min", 0, 100, 0, new Color(1, 1, 0), true);
-        DebugGUI.SetGraphProperties("Thresh", "Threshold", 0, 100, 0, new Color(1, 0, 0), true);
+        DebugGUI.SetGraphProperties(
+            "MicInput", "Input", 0, 100, 0, 
+            new Color(0, 1, 1), false);
+        DebugGUI.SetGraphProperties(
+            "Thresh", "Threshold", 0, 100, 0,
+            new Color(1, 0.5f, 1), false);
     }
 
 
     void UpdateGraphs()
     {
-        DebugGUI.Graph(key:"MicInput", val:loudnessInDb);
-        DebugGUI.Graph(key:"Median", val:medianLoudnessInDb);
-        DebugGUI.Graph(key:"Max", val:maxLoudnessInDb);
-        DebugGUI.Graph(key:"Min", val:minLoudnessInDb);
-        DebugGUI.Graph(key:"Thresh", val:threshold);
-        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
+        DebugGUI.Graph(key: "MicInput", val: loudnessInDb);
+        DebugGUI.Graph(key: "Thresh", val: threshold);
         DebugGUI.LogPersistent("MicName", String.Format("Mic: {0}", _device));
+        DebugGUI.LogPersistent("trigger", String.Format("Triggered: {0}", trigger));
     }
+    
 
     //stop mic when loading a new level or quit application
     void OnDisable()
@@ -187,37 +181,45 @@ public class MicInput : MonoBehaviour
         StopMicrophone();
     }
 
-    void OnDestroy()
+
+    void DestroyDebugging()
     {
-        StopMicrophone();
-        
         // Clean up our logs and graphs when this object is destroyed
+        DebugGUI.ClearPersistent();
+        DebugGUI.ClearGraph("MicInput");
+        DebugGUI.ClearGraph("Thresh");
         DebugGUI.RemoveGraph("MicInput");
-        DebugGUI.RemoveGraph("Median");
-        DebugGUI.RemoveGraph("Max");
-        DebugGUI.RemoveGraph("Min");
         DebugGUI.RemoveGraph("Thresh");
         DebugGUI.RemovePersistent("trigger");
         DebugGUI.RemovePersistent("MicName");
+        DebugGUI.RemovePersistent("FPS");
+        DebugGUI.DeleteMe();
+    }
+
+    void OnDestroy()
+    {
+        DestroyDebugging();
+        StopMicrophone();
     }
 
 
     float getMedianLoudness()
     {
-        
         int numberCount = loudnessDBCache.Count;
-        int halfIndex = loudnessDBCache.Count/2;
-        var sortedNumbers = loudnessDBCache.OrderBy(n=>n);
+        int halfIndex = loudnessDBCache.Count / 2;
+        var sortedNumbers = loudnessDBCache.OrderBy(n => n);
         float median;
         if (numberCount > 0)
         {
             if ((numberCount % 2) == 0)
             {
                 float mid = sortedNumbers.ElementAt(halfIndex);
-                float mid_1 =  sortedNumbers.ElementAt(halfIndex-1);
-            
-                median = (mid + mid_1)/ 2;
-            } else {
+                float mid_1 = sortedNumbers.ElementAt(halfIndex - 1);
+
+                median = (mid + mid_1) / 2;
+            }
+            else
+            {
                 median = sortedNumbers.ElementAt(halfIndex);
             }
         }
@@ -225,7 +227,7 @@ public class MicInput : MonoBehaviour
         {
             median = maxLoudnessInDb;
         }
-        
+
 
         return median;
     }
