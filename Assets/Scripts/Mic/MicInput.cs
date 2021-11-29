@@ -171,13 +171,12 @@ public class MicInput : MonoBehaviour
 
 
     // start mic when scene starts
-    void OnEnable()
+    void Awake()
     {
         loudnessDBCache = new Queue<float>();
         InitMic();
         _isInitialized = true;
         Instance = this;
-
         SetupDebuggers();
     }
 
@@ -219,7 +218,6 @@ public class MicInput : MonoBehaviour
         DebugGUI.RemoveGraph("Thresh");
         DebugGUI.RemovePersistent("trigger");
         DebugGUI.RemovePersistent("MicName");
-        DebugGUI.DeleteMe();
     }
 
     void OnDestroy()

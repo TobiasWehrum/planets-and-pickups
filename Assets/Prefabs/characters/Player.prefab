@@ -4912,7 +4912,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5006,8 +5005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1531d65cea464d4fab612946d86efcf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeedOnPlanet: 500
-  freeMovementSpeed: 0
+  moveSpeedOnPlanet: 600
   jumpImpulse: 20
   maxSpeed: Infinity
   onPlanetRadius: 0.3
@@ -5016,6 +5014,7 @@ MonoBehaviour:
   mainRenderer: {fileID: 4378866448452395384}
   trailRenderer: {fileID: 3149763360133625605}
   deathParticleSystem: {fileID: 3149763359195086988}
+  micInput: {fileID: 0}
   currentAngle: 0
   manualMovementOnPlanet: 0
 --- !u!58 &3149763359840970696

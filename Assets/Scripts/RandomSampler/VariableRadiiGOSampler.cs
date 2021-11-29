@@ -22,7 +22,7 @@ public class VariableRadiiGOSampler : MonoBehaviour
 
     [Inject] private GameArea gameArea;
     [Inject] private Player player;
-    [Inject] private FollowTransform followCam;
+    private Camera cam;
     [SerializeField] private GameObject goPrefab;
     private List<GameObject> gos;
 
@@ -42,7 +42,9 @@ public class VariableRadiiGOSampler : MonoBehaviour
             seed = (int) DateTime.Now.Ticks;
         gos = new List<GameObject>();
         center = new Vector3(regionSize / 2, regionSize / 2, 0.5f);
+        cam = Camera.main;
         Reset();
+        
     }
 
     private void Reset()
@@ -74,7 +76,7 @@ public class VariableRadiiGOSampler : MonoBehaviour
         
         gameArea.InitGameArea(center);
         player.Reset( new Vector3(center.x, center.y, player.transform.position.z));
-        followCam.transform.position = new Vector3(center.x, center.y, followCam.transform.position.z);
+        cam.transform.position = new Vector3(center.x, center.y, cam.transform.position.z);
         
     }
 

@@ -1,4 +1,5 @@
 using System;
+using Cinemachine;
 using UnityEditor;
 using UnityEngine;
 using Zenject;
@@ -67,7 +68,9 @@ namespace MiniPlanetDefense
             timer = gameObject.AddComponent<Timer>();
             Reset(transform.position);
             micInput = FindObjectOfType<MicInput>();
-            
+            CinemachineVirtualCamera cvm = FindObjectOfType<CinemachineVirtualCamera>();
+            if (cvm != null)
+                cvm.Follow = transform;
         }
 
 

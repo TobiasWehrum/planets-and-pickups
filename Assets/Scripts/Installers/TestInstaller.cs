@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Cinemachine;
 using MiniPlanetDefense;
 using UnityEngine;
 using Zenject;
@@ -13,7 +14,6 @@ public class TestInstaller : MonoInstaller
     public GameObject soundManagerPrefab;
     public GameObject playerPrefab;
     public GameObject uiPrefab;
-    public GameObject cameraPrefab;
     public GameObject poolPrefab;
     public GameObject gameAreaPrefab;
 
@@ -32,7 +32,6 @@ public class TestInstaller : MonoInstaller
         Container.Bind<SoundManager>().FromComponentInNewPrefab(soundManagerPrefab).AsSingle().NonLazy();
         Container.Bind<IngameUI>().FromComponentInNewPrefab(uiPrefab).AsSingle().NonLazy();
         Container.Bind<Player>().FromComponentInNewPrefab(playerPrefab).AsSingle().NonLazy();
-        Container.Bind<FollowTransform>().FromComponentInNewPrefab(cameraPrefab).AsSingle().NonLazy();
         Container.Bind<Pool>().FromComponentInNewPrefab(poolPrefab).AsSingle().NonLazy();
         Container.Bind<GameArea>().FromComponentInNewPrefab(gameAreaPrefab).AsSingle().NonLazy();
     }

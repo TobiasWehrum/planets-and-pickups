@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using Zenject;
 using Zchfvy.Plus;
@@ -13,6 +14,7 @@ namespace MiniPlanetDefense
 
         public float Radius;
         public Vector3 Center;
+        public PolygonCollider2D col;
 
         void OnDrawGizmos()
         {
@@ -38,8 +40,12 @@ namespace MiniPlanetDefense
             Vector3 pos = new Vector3(c.x, c.y, 5.0f);
             Center = pos;
             transform.position = pos;
-            Radius = transform.localScale.x / 2f;    
-        
+            Radius = transform.localScale.x / 2f;
+            col = GetComponent<PolygonCollider2D>();
+
+            CinemachineConfiner conf = FindObjectOfType<CinemachineConfiner>();
+            if (conf != null)
+                conf.m_BoundingShape2D = col;
         }
         
     }
