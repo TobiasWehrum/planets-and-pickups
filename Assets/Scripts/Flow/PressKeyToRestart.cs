@@ -12,7 +12,7 @@ namespace MiniPlanetDefense
 
         void Update()
         {
-            if (Input.GetKeyDown(key))
+            if (Input.GetKeyDown(key) || MicInput.isTriggered())
             {
                 Time.timeScale = 1f;
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

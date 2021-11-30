@@ -5009,8 +5009,8 @@ MonoBehaviour:
   jumpImpulse: 20
   maxSpeed: Infinity
   onPlanetRadius: 0.3
-  colorOnPlanet: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  colorOffPlanet: {r: 1, g: 1, b: 1, a: 1}
+  colorOnPlanet: {r: 1, g: 0.6627451, b: 0.5294118, a: 1}
+  colorOffPlanet: {r: 1, g: 0.90588236, b: 0.29803923, a: 1}
   mainRenderer: {fileID: 4378866448452395384}
   trailRenderer: {fileID: 3149763360133625605}
   deathParticleSystem: {fileID: 3149763359195086988}

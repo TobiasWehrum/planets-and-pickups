@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace MiniPlanetDefense
 {
@@ -22,15 +23,12 @@ namespace MiniPlanetDefense
         {
             introScreen.SetActive(true);
             restartScreen.SetActive(false);
+            UpdateScoreDisplay();
         }
 
-        public void SetScore(int value)
+        public void UpdateScoreDisplay()
         {
-            if (score == value)
-                return;
-
-            score = value;
-            textScore.text = score.ToString("000");
+            textScore.text = ScoreManager.GetScore().ToString();
         }
 
         
@@ -55,6 +53,13 @@ namespace MiniPlanetDefense
             yield return new WaitForSeconds(restartScreenDelay);
             
             restartScreen.gameObject.SetActive(true);
+        }
+
+
+        public void GoToMenuScene()
+        {
+            ScoreManager.SaveScore();
+            SceneManager.LoadScene("StartMenu");
         }
     }
 }

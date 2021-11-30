@@ -2,6 +2,7 @@ using System;
 using Cinemachine;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 using Random = UnityEngine.Random;
 using Zchfvy.Plus;
@@ -41,7 +42,6 @@ namespace MiniPlanetDefense
 
         bool isColoredOnPlanet;
 
-        int score;
 
         bool destroyed;
 
@@ -282,8 +282,8 @@ namespace MiniPlanetDefense
 
                 soundManager.PlaySound(Sound.Pickup);
 
-                score++;
-                ingameUI.SetScore(score);
+                ScoreManager.IncreaseScore();
+                ingameUI.UpdateScoreDisplay();
             }
             else if (otherGameObject.CompareTag(Tag.Enemy))
             {
@@ -310,9 +310,8 @@ namespace MiniPlanetDefense
         void EndRound()
         {
             ingameUI.ShowRestartScreen();
+            ScoreManager.SaveScore();
             destroyed = true;
-            
-            
         }
 
 

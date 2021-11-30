@@ -31,15 +31,18 @@ public class Highscores : MonoBehaviour {
     }
 
     IEnumerator UploadNewHighscore(string username, int score) {
-        WWW www = new WWW(webURL + privateCode + "/add/" + WWW.EscapeURL(username) + "/" + score);
-        yield return www;
+        if ((score > 0) && (username.Length>0))
+        {
+            WWW www = new WWW(webURL + privateCode + "/add/" + WWW.EscapeURL(username) + "/" + score);
+            yield return www;
 
-        if (string.IsNullOrEmpty(www.error)) {
-            print ("Upload Successful");
-            DownloadHighscores();
-        }
-        else {
-            print ("Error uploading: " + www.error);
+            if (string.IsNullOrEmpty(www.error)) {
+                print ("Upload Successful");
+                DownloadHighscores();
+            }
+            else {
+                print ("Error uploading: " + www.error);
+            }
         }
     }
 

@@ -22,7 +22,7 @@ namespace MiniPlanetDefense
         
         void Update()
         {
-            if (Input.GetKeyDown(key))
+            if (Input.GetKeyDown(key)|| MicInput.isTriggered())
             {
                 gameObject.SetActive(false);
             }
